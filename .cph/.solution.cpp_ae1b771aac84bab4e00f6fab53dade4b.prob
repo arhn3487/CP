@@ -1,0 +1,1 @@
+{"name":"Local: solution","url":"c:\\Users\\ASUS\\Desktop\\Practical\\solution.cpp","tests":[{"id":1739460076050,"input":"1\n3\n10 7 6","output":"1\n3\n89\n0\n1"},{"id":1740151984429,"input":"1\n4\n1 2 4 2\n","output":"12"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"c:\\Users\\ASUS\\Desktop\\Practical\\solution.cpp","group":"local","local":true}

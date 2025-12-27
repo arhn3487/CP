@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Traffic Light Compiler</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.1) 10px,
+                rgba(255, 255, 255, 0.1) 20px
+            );
+            animation: slide 20s linear infinite;
+        }
+
+        @keyframes slide {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-section {
+            padding: 30px;
+            background: white;
+            border-bottom: 2px solid #eee;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .input-field {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .parse-btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .parse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .simulation-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .stop-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .reset-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .examples {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .example-btn {
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 3px solid #ff6b6b;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .grammar-rules {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .grammar-rules div {
+            margin: 8px 0;
+            padding: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .grammar-rules div:hover {
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 5px;
+        }
+
+        .arrow {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        .tokens-container {
+            display: grid;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .token {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .token.keyword { border-left-color: #dc3545; }
+        .token.id { border-left-color: #28a745; }
+        .token.num { border-left-color: #ffc107; }
+        .token.arrow { border-left-color: #17a2b8; }
+        .token.semicolon { border-left-color: #6f42c1; }
+        .token.error { border-left-color: #fd7e14; background: #fff3cd; }
+
+        .token:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .token-value {
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .token-type {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .syntax-tree {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px dashed #667eea;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .tree-node {
+            margin: 5px;
+            padding: 8px 12px;
+            display: inline-block;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tree-node:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .tree-level {
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .tree-connection {
+            color: #667eea;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .semantic-analysis {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .semantic-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid #ffa726;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        .success {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #28a745;
+        }
+
+        .traffic-light-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .traffic-light {
+            background: #333;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .light {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 10px 0;
+            border: 3px solid #555;
+            transition: all 0.5s ease;
+        }
+
+        .red { background: #444; }
+        .yellow { background: #444; }
+        .green { background: #444; }
+
+        .red.active { background: #ff4444; box-shadow: 0 0 20px #ff4444; }
+        .yellow.active { background: #ffff44; box-shadow: 0 0 20px #ffff44; }
+        .green.active { background: #44ff44; box-shadow: 0 0 20px #44ff44; }
+
+        .light.active {
+            transform: scale(1.1);
+        }
+
+        .simulation-status {
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .current-state {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .traffic-light-container {
+                position: relative;
+                margin: 20px auto;
+                width: fit-content;
+            }
+            
+            .input-container {
+                flex-direction: column;
+            }
+            
+            .input-field {
+                min-width: 100%;
+            }
+        }
+
+        .animate-in {
+            animation: slideIn 0.6s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Tree Structure CSS */
+        .tree {
+            margin: 0 auto;
+            text-align: center;
+        }
+        .tree ul {
+            padding-top: 20px;
+            position: relative;
+            transition: all 0.5s;
+            -webkit-transition: all 0.5s;
+            -moz-transition: all 0.5s;
+        }
+        .tree li {
+            float: left;
+            text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 20px 5px 0 5px;
+            transition: all 0.5s;
+            -webkit-transition: all 0.5s;
+            -moz-transition: all 0.5s;
+        }
+        .tree li::before, .tree li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 1px solid #ccc;
+            width: 50%;
+            height: 20px;
+        }
+        .tree li::after {
+            right: auto;
+            left: 50%;
+            border-left: 1px solid #ccc;
+        }
+        .tree li:only-child::after, .tree li:only-child::before {
+            display: none;
+        }
+        .tree li:only-child {
+            padding-top: 0;
+        }
+        .tree li:first-child::before, .tree li:last-child::after {
+            border: 0 none;
+        }
+        .tree li:last-child::before {
+            border-right: 1px solid #ccc;
+            border-radius: 0 5px 0 0;
+        }
+        .tree li:first-child::after {
+            border-radius: 5px 0 0 0;
+        }
+        .tree ul ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 1px solid #ccc;
+            width: 0;
+            height: 20px;
+        }
+        .tree li a {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: #333;
+            background-color: white;
+            border-radius: 5px;
+            transition: all 0.5s;
+            -webkit-transition: all 0.5s;
+            -moz-transition: all 0.5s;
+            display: inline-block;
+        }
+        .tree li a:hover, .tree li a:hover+ul li a {
+            background: #f8f8f8;
+            color: #000;
+            border: 1px solid #94a0b4;
+        }
+        .tree li a:hover+ul li::after, .tree li a:hover+ul li::before, .tree li a:hover+ul::before, .tree li a:hover+ul ul::before {
+            border-color: #94a0b4;
+        }
+        .tree .node-info {
+            display: block;
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 3px;
+        }
+        .red { color: #e74c3c; font-weight: bold; }
+        .green { color: #27ae60; font-weight: bold; }
+        .root { background-color: #f2f2f2 !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚦 Interactive Traffic Light Compiler</h1>
+            <p>CT3 Assignment - Parse and Simulate Traffic Light States</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-container">
+                <input type="text" 
+                       id="inputString" 
+                       class="input-field" 
+                       placeholder="Enter traffic light state definition (e.g., state RED 10 -> GREEN;)"
+                       value="state RED 5 -> GREEN; state GREEN 8 -> YELLOW; state YELLOW 2 -> RED;">
+                <button class="parse-btn" onclick="parseInput()">Parse & Compile</button>
+            </div>
+            
+            <div class="simulation-controls">
+                <button class="control-btn start-btn" onclick="startSimulation()">▶ Start Simulation</button>
+                <button class="control-btn stop-btn" onclick="stopSimulation()">⏹ Stop</button>
+                <button class="control-btn reset-btn" onclick="resetSimulation()">🔄 Reset</button>
+                <span style="margin-left: 20px; font-weight: bold;">Time Scale:</span>
+                <select id="timeScale" onchange="updateTimeScale()">
+                    <option value="1000">1x (1 sec = 1 unit)</option>
+                    <option value="500">2x (0.5 sec = 1 unit)</option>
+                    <option value="200" selected>5x (0.2 sec = 1 unit)</option>
+                    <option value="100">10x (0.1 sec = 1 unit)</option>
+                </select>
+            </div>
+
+            <div class="examples">
+                <div class="example-btn" onclick="setExample('state RED 5 -> GREEN;')">Simple State</div>
+                <div class="example-btn" onclick="setExample('state GREEN 8 -> YELLOW; state YELLOW 3 -> RED;')">Two States</div>
+                <div class="example-btn" onclick="setExample('state RED 5 -> GREEN; state GREEN 8 -> YELLOW; state YELLOW 2 -> RED;')">Full Cycle</div>
+                <div class="example-btn" onclick="setExample('state RED 10 -> GREEN; state GREEN 6 -> YELLOW; state YELLOW 3 -> RED; state RED 4 -> GREEN;')">Complex</div>
+            </div>
+        </div>
+
+        <div class="traffic-light-container">
+            <div class="traffic-light">
+                <div class="light red active" id="redLight"></div>
+                <div class="light yellow" id="yellowLight"></div>
+                <div class="light green" id="greenLight"></div>
+            </div>
+            <div class="simulation-status">
+                <div class="current-state" id="currentState">Current: RED</div>
+                <div class="timer" id="timer">Ready to start</div>
+                <div id="nextState">Next: -</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="section animate-in">
+                <h2>📝 Grammar Rules</h2>
+                <div class="grammar-rules">
+                    <div>S <span class="arrow">→</span> StateList</div>
+                    <div>StateList <span class="arrow">→</span> State StateList | State</div>
+                    <div>State <span class="arrow">→</span> "state" ID NUM "->" ID ";"</div>
+                    <div>ID <span class="arrow">→</span> RED | GREEN | YELLOW</div>
+                    <div>NUM <span class="arrow">→</span> DIGITS</div>
+                    <div>DIGITS <span class="arrow">→</span> DIGIT DIGITS | DIGIT</div>
+                    <div>DIGIT <span class="arrow">→</span> 0|1|2|3|4|5|6|7|8|9</div>
+                </div>
+            </div>
+
+            <div class="section animate-in">
+                <h2>🔍 Lexical Analysis</h2>
+                <div id="tokensContainer" class="tokens-container">
+                    <!-- Tokens will be populated here -->
+                </div>
+            </div>
+
+            <div class="section animate-in">
+                <h2>🌳 Annotated Parse Tree</h2>
+                <div id="parseTree" class="syntax-tree">
+                    <div class="tree">
+                        <ul>
+                            <li>
+                                <a href="#" class="root">S
+                                    <span class="node-info">(S.transitions = {(RED, 10, GREEN)})</span>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a href="#">StateList
+                                            <span class="node-info">(StateList.transitions = {(RED, 10, GREEN)})</span>
+                                        </a>
+                                        <ul>
+                                            <li>
+                                                <a href="#">State
+                                                    <span class="node-info">(State.transition = (ID1.name, NUM.value, ID2.name) = (RED, 10, GREEN))</span>
+                                                </a>
+                                                <ul>
+                                                    <li>
+                                                        <a href="#">ID.name
+                                                            <span class="node-info" class="red">ID.name = <span class="red">RED</span></span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">NUM.value
+                                                            <span class="node-info">NUM.value = 10</span>
+                                                            <span class="node-info">(DIGITS → 1 ○ 0)</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">ID.name
+                                                            <span class="node-info">ID.name = <span class="green">GREEN</span></span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section animate-in">
+                <h2>🔬 Semantic Analysis</h2>
+                <div id="semanticAnalysis" class="semantic-analysis">
+                    <!-- Semantic analysis will be shown here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let compiledStates = [];
+        let currentStateIndex = 0;
+        let simulationInterval = null;
+        let timeRemaining = 0;
+        let timeScale = 200; // milliseconds per time unit
+        let isSimulationRunning = false;
+
+        // Tokenizer
+        function tokenize(input) {
+            const tokens = [];
+            const keywords = ['state'];
+            const ids = ['RED', 'GREEN', 'YELLOW'];
+            
+            // Split input into tokens
+            const regex = /(\w+|->|;)/g;
+            let match;
+            
+            while ((match = regex.exec(input)) !== null) {
+                const token = match[1].trim();
+                if (!token) continue;
+                
+                if (keywords.includes(token.toLowerCase())) {
+                    tokens.push({ value: token, type: 'KEYWORD', class: 'keyword' });
+                } else if (ids.includes(token.toUpperCase())) {
+                    tokens.push({ value: token.toUpperCase(), type: 'ID', class: 'id' });
+                } else if (/^\d+$/.test(token)) {
+                    tokens.push({ value: token, type: 'NUM', class: 'num' });
+                } else if (token === '->') {
+                    tokens.push({ value: token, type: 'ARROW', class: 'arrow' });
+                } else if (token === ';') {
+                    tokens.push({ value: token, type: 'SEMICOLON', class: 'semicolon' });
+                } else {
+                    tokens.push({ value: token, type: 'ERROR', class: 'error' });
+                }
+            }
+            
+            return tokens;
+        }
+
+        // Parser
+        function parse(tokens) {
+            let index = 0;
+            const tree = { name: 'S', children: [] };
+            const states = [];
+            
+            function parseStateList(parent) {
+                const stateList = { name: 'StateList', children: [] };
+                parent.children.push(stateList);
+                
+                while (index < tokens.length) {
+                    if (tokens[index]?.type === 'KEYWORD' && tokens[index]?.value.toLowerCase() === 'state') {
+                        parseState(stateList);
+                    } else {
+                        index++; // Skip unexpected tokens
+                    }
+                }
+            }
+            
+            function parseState(parent) {
+                const state = { name: 'State', children: [] };
+                parent.children.push(state);
+                
+                const expectedPattern = ['KEYWORD', 'ID', 'NUM', 'ARROW', 'ID', 'SEMICOLON'];
+                const stateData = {};
+                
+                for (let i = 0; i < expectedPattern.length && index < tokens.length; i++) {
+                    if (tokens[index]?.type === expectedPattern[i]) {
+                        state.children.push({ name: tokens[index].value, children: [] });
+                        
+                        if (i === 1) stateData.from = tokens[index].value;
+                        if (i === 2) stateData.duration = parseInt(tokens[index].value);
+                        if (i === 4) stateData.to = tokens[index].value;
+                        
+                        index++;
+                    } else {
+                        state.children.push({ name: 'ERROR: Expected ' + expectedPattern[i], children: [] });
+                        return;
+                    }
+                }
+                
+                if (stateData.from && stateData.to && stateData.duration) {
+                    states.push(stateData);
+                }
+            }
+            
+            parseStateList(tree);
+            return { tree, states };
+        }
+
+        // Display functions
+        function displayTokens(tokens) {
+            const container = document.getElementById('tokensContainer');
+            container.innerHTML = '';
+            
+            if (tokens.length === 0) {
+                container.innerHTML = '<div class="token error"><span class="token-value">No tokens found</span><span class="token-type">ERROR</span></div>';
+                return;
+            }
+            
+            tokens.forEach(token => {
+                const tokenDiv = document.createElement('div');
+                tokenDiv.className = `token ${token.class}`;
+                tokenDiv.innerHTML = `
+                    <span class="token-value">${token.value}</span>
+                    <span class="token-type">${token.type}</span>
+                `;
+                container.appendChild(tokenDiv);
+            });
+        }
+        
+        function displayAnnotatedParseTree(tokens, states) {
+            const container = document.getElementById('parseTree');
+            container.innerHTML = '';
+            
+            if (!container) {
+                console.error('Parse tree container not found');
+                return;
+            }
+            
+            if (tokens.length === 0) {
+                container.innerHTML = '<div class="tree-node error">No parse tree - invalid input</div>';
+                return;
+            }
+            
+            // Build tree structure with semantic annotations
+            let treeHTML = '<div class="parse-tree-container">';
+            
+            if (states.length === 0) {
+                treeHTML += `
+                    <div class="tree-level">
+                        <div class="tree-node error" style="background: #f8d7da; color: #721c24; border-color: #dc3545;">
+                            Error: No valid parse tree
+                            <div class="semantic-annotation">Unable to parse input tokens</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Calculate all transitions for semantic annotation
+                const allTransitions = states.map(s => `{${s.from}, ${s.duration}, ${s.to}}`).join(', ');
+                
+                // Root S node
+                treeHTML += `
+                    <div class="tree-level">
+                        <div class="tree-node root-node">
+                            S
+                            <div class="semantic-annotation">S.transitions = {${allTransitions}}</div>
+                        </div>
+                    </div>
+                    <div class="tree-connector">│</div>
+                `;
+                
+                // StateList node
+                treeHTML += `
+                    <div class="tree-level">
+                        <div class="tree-node non-terminal">
+                            StateList
+                            <div class="semantic-annotation">StateList.transitions = {${allTransitions}}</div>
+                        </div>
+                    </div>
+                    <div class="tree-connector">│</div>
+                `;
+                
+                // Individual State nodes
+                states.forEach((state, index) => {
+                    const isLast = index === states.length - 1;
+                    
+                    treeHTML += `
+                        <div class="tree-level">
+                            <div class="tree-node non-terminal">
+                                State
+                                <div class="semantic-annotation">State.transition = (ID1.name, NUM.value, ID2.name) = (${state.from}, ${state.duration}, ${state.to})</div>
+                            </div>
+                        </div>
+                        <div class="tree-connector">${states.length > 1 && !isLast ? '┬' : '│'}</div>
+                        <div class="tree-level">
+                            <div class="tree-branch-container">
+                                <div class="tree-node terminal">
+                                    "state"
+                                    <div class="semantic-annotation">KEYWORD</div>
+                                </div>
+                            </div>
+                            <div class="tree-branch-container">
+                                <div class="tree-node terminal">
+                                    ID
+                                    <div class="semantic-annotation">ID1.name = ${state.from}</div>
+                                </div>
+                            </div>
+                            <div class="tree-branch-container">
+                                <div class="tree-node terminal">
+                                    NUM
+                                    <div class="semantic-annotation">NUM.value = ${state.duration}<br>(DIGITS → ${state.duration.toString().split('').join(' → ')} → ${state.duration})</div>
+                                </div>
+                            </div>
+                            <div class="tree-branch-container">
+                                <div class="tree-node terminal">
+                                    "->"
+                                    <div class="semantic-annotation">ARROW</div>
+                                </div>
+                            </div>
+                            <div class="tree-branch-container">
+                                <div class="tree-node terminal">
+                                    ID
+                                    <div class="semantic-annotation">ID2.name = ${state.to}</div>
+                                </div>
+                            </div>
+                            <div class="tree-branch-container">
+                                <div class="tree-node terminal">
+                                    ";"
+                                    <div class="semantic-annotation">SEMICOLON</div>
+                                </div>
+                            </div>
+                        </div>
+                        ${!isLast ? '<div class="tree-connector">│</div>' : ''}
+                    `;
+                });
+                
+                // Add leaf level for IDs showing their specific values
+                if (states.length > 0) {
+                    treeHTML += `
+                        <div class="tree-connector">┌─────┬─────┬─────┐</div>
+                        <div class="tree-level">
+                    `;
+                    
+                    const firstState = states[0];
+                    treeHTML += `
+                            <div class="tree-node terminal">
+                                ${firstState.from}
+                                <div class="semantic-annotation">ID.name = ${firstState.from}</div>
+                            </div>
+                            <div class="tree-node terminal">
+                                ${firstState.duration}
+                                <div class="semantic-annotation">DIGITS → ${firstState.duration}</div>
+                            </div>
+                            <div class="tree-node terminal">
+                                ${firstState.to}
+                                <div class="semantic-annotation">ID.name = ${firstState.to}</div>
+                            </div>
+                    `;
+                    
+                    treeHTML += '</div>';
+                }
+            }
+            
+            treeHTML += '</div>';
+            container.innerHTML = treeHTML;
+        }
+
+        function displaySemanticAnalysis(states, tokens) {
+            const container = document.getElementById('semanticAnalysis');
+            container.innerHTML = '';
+            
+            if (states.length === 0) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'semantic-item error';
+                errorDiv.innerHTML = '<strong>Error:</strong> No valid states compiled';
+                container.appendChild(errorDiv);
+                return;
+            }
+            
+            states.forEach((state, index) => {
+                const stateDiv = document.createElement('div');
+                stateDiv.className = 'semantic-item success';
+                stateDiv.innerHTML = `
+                    <strong>State ${index + 1}:</strong> ${state.from} → ${state.to}<br>
+                    <strong>Duration:</strong> ${state.duration} time units<br>
+                    <strong>Transition:</strong> ${isValidTransition(state.from, state.to) ? 'Valid' : 'Invalid'} traffic light sequence
+                `;
+                container.appendChild(stateDiv);
+            });
+            
+            // Add compilation summary
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = 'semantic-item';
+            const validStates = states.filter(s => isValidTransition(s.from, s.to)).length;
+            
+            summaryDiv.innerHTML = `
+                <strong>Compilation Summary:</strong><br>
+                <strong>Total States:</strong> ${states.length}<br>
+                <strong>Valid States:</strong> ${validStates}<br>
+                <strong>Total Tokens:</strong> ${tokens.length}<br>
+                <strong>Ready for Simulation:</strong> ${validStates > 0 ? 'Yes' : 'No'}
+            `;
+            container.appendChild(summaryDiv);
+        }
+
+        function isValidTransition(from, to) {
+            const validTransitions = {
+                'RED': ['GREEN'],
+                'GREEN': ['YELLOW'],
+                'YELLOW': ['RED']
+            };
+            return validTransitions[from]?.includes(to) || from === to;
+        }
+
+        // Simulation functions
+        function updateTrafficLight(state) {
+            const lights = ['red', 'yellow', 'green'];
+            lights.forEach(light => {
+                const element = document.getElementById(light + 'Light');
+                element.classList.remove('active');
+            });
+
+            const currentElement = document.getElementById(state.toLowerCase() + 'Light');
+            if (currentElement) {
+                currentElement.classList.add('active');
+            }
+        }
+
+        function updateStatus() {
+            if (compiledStates.length === 0) return;
+            
+            const currentState = compiledStates[currentStateIndex];
+            const nextStateIndex = (currentStateIndex + 1) % compiledStates.length;
+            const nextState = compiledStates[nextStateIndex];
+            
+            document.getElementById('currentState').textContent = `Current: ${currentState.from}`;
+            document.getElementById('timer').textContent = isSimulationRunning ? 
+                `Time: ${timeRemaining}/${currentState.duration}` : 'Stopped';
+            document.getElementById('nextState').textContent = `Next: ${nextState ? nextState.from : '-'}`;
+        }
+
+        function startSimulation() {
+            if (compiledStates.length === 0) {
+                alert('Please compile some states first!');
+                return;
+            }
+            
+            if (isSimulationRunning) return;
+            
+            isSimulationRunning = true;
+            const currentState = compiledStates[currentStateIndex];
+            timeRemaining = currentState.duration;
+            
+            updateTrafficLight(currentState.from);
+            updateStatus();
+            
+            simulationInterval = setInterval(() => {
+                timeRemaining--;
+                updateStatus();
+                
+                if (timeRemaining <= 0) {
+                    // Transition to next state
+                    const currentState = compiledStates[currentStateIndex];
+                    updateTrafficLight(currentState.to);
+                    
+                    // Find next state that starts with current state's 'to'
+                    let nextIndex = -1;
+                    for (let i = 0; i < compiledStates.length; i++) {
+                        if (compiledStates[i].from === currentState.to) {
+                            nextIndex = i;
+                            break;
+                        }
+                    }
+                    
+                    if (nextIndex === -1) {
+                        // If no matching state found, cycle to first state or stop
+                        nextIndex = (currentStateIndex + 1) % compiledStates.length;
+                    }
+                    
+                    currentStateIndex = nextIndex;
+                    const nextState = compiledStates[currentStateIndex];
+                    timeRemaining = nextState.duration;
+                    updateTrafficLight(nextState.from);
+                }
+            }, timeScale);
+        }
+
+        function stopSimulation() {
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationInterval = null;
+            }
+            isSimulationRunning = false;
+            updateStatus();
+        }
+
+        function resetSimulation() {
+            stopSimulation();
+            currentStateIndex = 0;
+            if (compiledStates.length > 0) {
+                const firstState = compiledStates[0];
+                timeRemaining = firstState.duration;
+                updateTrafficLight(firstState.from);
+                updateStatus();
+            }
+        }
+
+        function updateTimeScale() {
+            const select = document.getElementById('timeScale');
+            timeScale = parseInt(select.value);
+            
+            if (isSimulationRunning) {
+                stopSimulation();
+                startSimulation();
+            }
+        }
+
+        function parseInput() {
+            const input = document.getElementById('inputString').value.trim();
+            
+            if (!input) {
+                alert('Please enter a traffic light state definition!');
+                return;
+            }
+            
+            // Stop any running simulation
+            stopSimulation();
+            
+            try {
+                // Tokenize
+                const tokens = tokenize(input);
+                displayTokens(tokens);
+                
+                // Parse
+                const { tree, states } = parse(tokens);
+                displayAnnotatedParseTree(tokens, states);
+                
+                // Semantic Analysis
+                displaySemanticAnalysis(states, tokens);
+                
+                // Compile states for simulation
+                compiledStates = states.filter(s => isValidTransition(s.from, s.to));
+                currentStateIndex = 0;
+                
+                if (compiledStates.length > 0) {
+                    resetSimulation();
+                }
+            } catch (error) {
+                console.error('Error parsing input:', error);
+                alert('Error parsing input: ' + error.message);
+            }
+        }
+
+        function setExample(example) {
+            document.getElementById('inputString').value = example;
+            parseInput();
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            parseInput();
+        });
+
+        document.getElementById('inputString').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                parseInput();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Microprocessors Exam – Answers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { --accent:#0b5; --text:#111; }
+    html,body{font-family:Segoe UI, Roboto, Arial, Helvetica, sans-serif; color:var(--text); line-height:1.35;}
+    body{max-width:900px; margin:0 auto; padding:32px;}
+    h1,h2{margin:0 0 8px 0}
+    h1{font-size:26px; letter-spacing:.2px}
+    h2{font-size:20px; color:#333; margin-top:24px}
+    h3{font-size:17px; margin:18px 0 6px}
+    .q{border-left:4px solid var(--accent); padding-left:12px; margin-top:26px}
+    ul{margin:6px 0 8px 20px}
+    code{font-family:Consolas,Menlo,monospace}
+    .note{color:#444; font-style:italic}
+    @page{ size:A4; margin:20mm; }
+    @media print{ a{color:inherit; text-decoration:none} }
+  </style>
+</head>
+<body>
+  <h1>Microprocessors Exam &mdash; Model Answers</h1>
+  <p class="note">Syllabus context: 80286/80386 protection and segmentation, 8255 PPI, 8086 modes, Pentium basics.</p>
+
+  <div class="q" id="q1">
+    <h2>Question 1</h2>
+    <h3>(a) How protection among tasks/users is ensured in 80286</h3>
+    <ul>
+      <li><b>Segmentation with descriptor tables</b>: Every segment is described by an 8‑byte descriptor in GDT/LDT; CPU enforces <i>base+limit</i> on every access.</li>
+      <li><b>Privilege levels (rings 0–3)</b>: CPL (of running code) and RPL (from selector) combine; effective privilege = <code>max(CPL, RPL)</code>. DPL on descriptors defines who may access a segment.</li>
+      <li><b>Type/access checks</b>: Code vs data/stack, readable/writable, expand‑down stacks, conforming code; <i>Present</i> bit must be set.</li>
+      <li><b>Controlled transfers</b> via call/interrupt/trap/task gates; hardware validates DPL and gate type before control is transferred.</li>
+      <li><b>Task State Segment (TSS)</b> with hardware task switch; “busy” bit prevents re‑entry; separate stacks per privilege level.</li>
+      <li><b>I/O protection</b>: IOPL in FLAGS restricts CLI/STI and I/O; only sufficiently privileged code can perform them.</li>
+    </ul>
+
+    <h3>(b) Descriptor analysis</h3>
+    <p>Given: selector <code>000Fh</code> points to descriptor in memory as <code>(0000912021146789)<sub>16</sub></code> (8 bytes, low→high).</p>
+    <ul>
+      <li>Bytes (low→high): <code>89 67 14 21 20 91 00 00</code></li>
+      <li><b>Limit</b> (low 16) = <code>0x6789</code>; high nibble = <code>0</code> → size = <code>limit + 1 = 0x678A</code> = <b>26,506 bytes</b>.</li>
+      <li><b>Base</b> = <code>0x00202114</code> → segment starts at <b>linear 00202114h</b>.</li>
+      <li><b>Access</b> byte <code>0x91 = 1001&nbsp;0001b</code>: P=1, DPL=00 (ring 0), S=1 (code/data), Type=0001 → <b>data, read‑only, expand‑up</b>.</li>
+      <li><b>Granularity/flags</b> = <code>0x00</code> → byte‑granular; 16‑bit segment.</li>
+      <li><b>Who can use</b>: DPL=0 → only ring‑0. Note: the selector has RPL=3 (<code>000Fh</code>), so a ring‑0 task must not use a user‑RPL selector; RPL should be ≤ DPL.</li>
+      <li><b>Type</b>: <b>Data segment</b> (not code/stack); expand‑up, read‑only.</li>
+    </ul>
+  </div>
+
+  <div class="q" id="q2">
+    <h2>Question 2</h2>
+    <h3>(a) 80286 protected→real mode and how 80386 fixes it</h3>
+    <ul>
+      <li>80286 cannot return to real mode without a reset.</li>
+      <li>80386 allows software exit: <code>CLI</code> → clear <code>CR0.PE</code> → far <code>JMP</code> to flush prefetch/segment cache → reload real‑mode segments/IVT → <code>STI</code>.</li>
+      <li>80386 also introduces <b>Virtual‑8086 mode</b> (EFLAGS.VM=1) to run real‑mode programs under protection without leaving protected mode.</li>
+    </ul>
+    <h3>(b) 80386 segment descriptor</h3>
+    <ul>
+      <li><b>Limit</b>: 20 bits (15..0 + 19..16). With G=0 it is byte‑granular; with G=1 use 4KB pages: size = <code>(limit &laquo; 12) + 0xFFF</code>.</li>
+      <li><b>Base</b>: 32 bits (15..0, 23..16, 31..24).</li>
+      <li><b>Access byte</b>: P, DPL, S, and Type (data/code/system; R/W, C, E, A).</li>
+      <li><b>Flags</b>: AVL, L (64‑bit, 0 on 386), D/B (16/32‑bit default), G (granularity).</li>
+      <li>Selector = (Index, TI, RPL); CPU checks <code>max(CPL,RPL)</code> vs DPL; present/limit/type checks on every access.</li>
+    </ul>
+  </div>
+
+  <div class="q" id="q3">
+    <h2>Question 3</h2>
+    <h3>(a) Specialty of 8255 Port C vs Ports A/B</h3>
+    <ul>
+      <li>Split into two nibbles (PC7..PC4 upper, PC3..PC0 lower) with independent directions.</li>
+      <li>Provides handshake/control lines for modes 1 and 2 (for A and B).</li>
+      <li>Has <b>BSR (Bit Set/Reset)</b> control word to individually set/reset any PC bit; A/B lack per‑bit BSR.</li>
+      <li>Can be general 8‑bit I/O in mode 0.</li>
+    </ul>
+    <h3>(b) 8255 control register = <code>F7h</code> analysis</h3>
+    <ul>
+      <li>Binary: <code>1111&nbsp;0111b</code> → mode‑set (D7=1).</li>
+      <li>Group A: D6–D5=<code>11</code> → <b>Mode 2</b> (bi‑directional) on Port A; D4=1 (don’t‑care in mode 2).</li>
+      <li>PC upper (D3=0): <b>output</b> (used for group‑A handshaking).</li>
+      <li>Group B: D2=1 → <b>Mode 1</b>; D1=1 → Port B <b>input</b>.</li>
+      <li>PC lower (D0=1): <b>input</b> (handshake for group‑B).</li>
+    </ul>
+    <h3>(c) 8086 minimum vs maximum mode</h3>
+    <ul>
+      <li><b>Minimum</b>: single‑processor; CPU drives M/IO, RD, WR, DEN, DT/&#772;R, ALE, INTA directly.</li>
+      <li><b>Maximum</b>: multi‑processor/co‑processor; status lines S2..S0 go to 8288, which generates bus controls; adds RQ/GT#, LOCK#, QS1/QS0 for arbitration/atomicity.</li>
+      <li>Minimum for simple systems; Maximum for systems with 8087/DMA/multiple masters.</li>
+    </ul>
+  </div>
+
+  <div class="q" id="q4">
+    <h2>Question 4</h2>
+    <h3>(a) Steps on external interrupt</h3>
+    <ul>
+      <li>Complete current instruction; check priority/IF.</li>
+      <li>Acknowledge (e.g., two INTA cycles, vector from 8259A or IDT).</li>
+      <li>If privilege change: switch stacks via TSS.</li>
+      <li>Push FLAGS (clear IF, TF), push CS and IP/EIP.</li>
+      <li>Load handler pointer (IVT/IDT). If applicable, push error code.</li>
+      <li>Execute ISR; return with <code>IRET</code>.</li>
+    </ul>
+    <h3>(b) Why Pentium is superscalar</h3>
+    <ul>
+      <li>Dual integer pipelines (U and V) allow two simple, pairable instructions to issue per cycle (in‑order dual‑issue).</li>
+      <li>Multiple decoders, separate AGUs, Harvard caches → IPC &gt; 1 on suitable mixes.</li>
+    </ul>
+    <h3>(c) Pentium paging vs 80386</h3>
+    <ul>
+      <li>80386: two‑level paging, 4KB pages only.</li>
+      <li>Pentium adds <b>PSE</b> (CR4.PSE=1) → 4MB pages (PS=1 in PDE); reduces TLB pressure for large mappings.</li>
+      <li>Similar protection bits; Pentium era adds larger/faster TLBs and cache‑control bits (PWT/PCD).</li>
+    </ul>
+  </div>
+
+  <p class="note">End of answers.</p>
+</body>
+</html>

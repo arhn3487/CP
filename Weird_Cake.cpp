@@ -1,0 +1,63 @@
+#pragma GCC optimize("O3")
+#include<bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#include "D:/debug.h"
+#else
+#define dbg(x...)
+#define dbgc(x...)
+#endif
+using namespace std;
+
+#define ll long long
+const int M=1e9+7;
+const ll infinity = LLONG_MAX;
+int dx[]={1,0,-1,0,1,1,-1,-1};//Right,Down,Left,Up,Right-Up,Right-Down,Left-Up,Left-Down
+int dy[]={0,-1,0,1,1,-1,1,-1};
+inline ll lcm(ll a,ll b) {return (a*b)/__gcd(a,b);}
+
+#define rall(v) v.rbegin(),v.rend()
+#define all(v) v.begin(),v.end()
+#define print(x) cout<<x<<'\n';
+#define yes(x) cout << ((x) ? "YES\n" : "NO\n");
+
+long double volume(double h,double r)
+{
+    long double ar=M_PI*h*h*(3*r-h);
+    return ar/3;
+}
+
+void solve()
+{
+    long double h,h1,h2;
+    while(cin>>h>>h1>>h2)
+    {
+    
+        long double r=h/2;
+        long double arr[3];
+        arr[0]=volume(h2,r);
+        arr[1]=volume(h1,r)-arr[0];
+        arr[2]=volume(h,r)-arr[0]-arr[1];
+
+        sort(arr,arr+3);
+
+        cout<<fixed<<setprecision(6);
+        for(auto x : arr) cout<<x<<' ';
+        cout<<'\n';
+    }
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    int t=1;
+    //cin>>t;
+
+    for(int i=1;i<=t;i++)
+    {
+        //cout<<"Case "<<i<<": ";
+        solve();
+    }
+}

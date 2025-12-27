@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MIST AtCoder Standings - ABC425</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>MIST AtCoder Standings - ABC425</h1>
+    <p>Showing only MIST participants.</p>
+
+    <table id="results">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>User</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // List of MIST usernames participating in ABC425
+        const mistUsers = [
+            "username1",
+            "username2",
+            "username3"
+            // Add all MIST usernames here
+        ];
+
+        async function fetchStandings() {
+            const tbody = document.querySelector('#results tbody');
+            tbody.innerHTML = 'Loading...';
+
+            try {
+                // Use a CORS proxy to avoid browser CORS issues
+                const res = await fetch(`https://cors-anywhere.herokuapp.com/https://atcoder.jp/contests/abc425/standings?lang=en`);
+                const html = await res.text();
+
+                // Parse HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const rows = doc.querySelectorAll('table tbody tr');
+
+                tbody.innerHTML = ''; // Clear table
+
+                rows.forEach(row => {
+                    const cols = row.querySelectorAll('td');
+                    if (cols.length < 3) return;
+
+                    const rank = cols[0].innerText.trim();
+                    const user = cols[1].innerText.trim();
+                    const score = cols[2].innerText.trim();
+
+                    if (mistUsers.includes(user)) {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${rank}</td><td>${user}</td><td>${score}</td>`;
+                        tbody.appendChild(tr);
+                    }
+                });
+
+            } catch (err) {
+                tbody.innerHTML = 'Error fetching standings. Check console.';
+                console.error(err);
+            }
+        }
+
+        fetchStandings();
+    </script>
+</body>
+</html>
