@@ -22,31 +22,20 @@ inline ll lcm(ll a,ll b) {return (a*b)/__gcd(a,b);}
 #define print(x) cout<<x<<'\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
-1 2 3 4 5 6 7
-
-void inc(int &a,int &b)
-{
-    if(a>0 && b<n)
-    {
-        if(a)
-    }
-}
-
 void solve()
 {
-    int n,m,k;cin>>n>>m>>k;
-    int x=0,y=0,sol=0;  
-
-    while (1)
+    int n;cin>>n;
+    if(n<=3)
     {
-        if(x==INT_MAX and y==INT_MAX) break;
-        if(sol>=m) break;
-        int din_sol_lagbe=min(x,y)+1;
-        if(din_sol_lagbe+sol>=m) break;
-        sol+=din_sol_lagbe;
-        
+        cout<<n<<'\n';
+        return;
     }
-    
+
+    if(n%2==0)
+    {
+        cout<<0<<'\n';
+    }
+    else cout<<1<<'\n';
 }
 
 int32_t main()
