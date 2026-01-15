@@ -22,34 +22,24 @@ inline ll lcm(ll a,ll b) {return (a*b)/__gcd(a,b);}
 #define print(x) cout<<x<<'\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
-
 void solve()
 {
-    int n,m,k,cnt=1;cin>>n>>m>>k;
-    int x=0,y=0,left=k-1,right=n-k,sol=0;  
-    debug(left,right);
+    int n,x,k;cin>>n>>x>>k;
+    vector<int> v;
 
-    while (1)
+    for(int i=0;i<n;i++)
     {
-        if(x==left and y==right) break;
-        debug(x,y);
-        int dir=0;
-        if(y<right && x>=y) dir=1;
-        else if(x<left && x<=y) dir=-1;
-        else break;
-        int din_sol_lagbe=(dir==1) ? y+1 : x+1;
-        debug(dir,din_sol_lagbe);
-        if(sol>=m) break;
-        if(din_sol_lagbe+sol>m) break;
-        debug('a');
-        sol+=din_sol_lagbe;
-        cnt++;
-        if(dir==1) y++;
-        else x++;
-        debug(sol,cnt);
+        int k;cin>>k;
+        if(k>x) v.push_back(k);
     }
-    
-    cout<<cnt<<'\n';
+
+    sort(all(v));
+    if(v.size()<k) 
+    {
+        cout<<"-1\n";
+        return;
+    }
+    cout<<v[k-1]<<'\n';
 }
 
 int32_t main()
@@ -59,7 +49,7 @@ int32_t main()
     cout.tie(NULL);
 
     int t=1;
-    cin>>t;
+    //cin>>t;
 
     for(int i=1;i<=t;i++)
     {

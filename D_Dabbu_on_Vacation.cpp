@@ -20,36 +20,18 @@ inline ll lcm(ll a,ll b) {return (a*b)/__gcd(a,b);}
 #define rall(v) v.rbegin(),v.rend()
 #define all(v) v.begin(),v.end()
 #define print(x) cout<<x<<'\n';
-#define yes(x) cout << ((x) ? "YES\n" : "NO\n");
-
+#define yes(x) cout << ((x) ? "Yes\n" : "No\n");
 
 void solve()
 {
-    int n,m,k,cnt=1;cin>>n>>m>>k;
-    int x=0,y=0,left=k-1,right=n-k,sol=0;  
-    debug(left,right);
-
-    while (1)
-    {
-        if(x==left and y==right) break;
-        debug(x,y);
-        int dir=0;
-        if(y<right && x>=y) dir=1;
-        else if(x<left && x<=y) dir=-1;
-        else break;
-        int din_sol_lagbe=(dir==1) ? y+1 : x+1;
-        debug(dir,din_sol_lagbe);
-        if(sol>=m) break;
-        if(din_sol_lagbe+sol>m) break;
-        debug('a');
-        sol+=din_sol_lagbe;
-        cnt++;
-        if(dir==1) y++;
-        else x++;
-        debug(sol,cnt);
-    }
-    
-    cout<<cnt<<'\n';
+    ld D,d,h;cin>>D>>d>>h;
+    ld k=D-d;
+    ld lombo=d-D/2;
+    ld rsq=(D*D/4)-lombo*lombo;
+    ld a1=M_PI*rsq*h;
+    ld a2=M_PI*D*D*D/12;
+    debug(a1,a2);
+    yes(abs(a1/2-a2)<=0.01)
 }
 
 int32_t main()
@@ -63,7 +45,7 @@ int32_t main()
 
     for(int i=1;i<=t;i++)
     {
-        //cout<<"Case "<<i<<": ";
+        cout<<"Case "<<i<<": ";
         solve();
     }
 }

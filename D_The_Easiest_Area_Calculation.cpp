@@ -22,34 +22,19 @@ inline ll lcm(ll a,ll b) {return (a*b)/__gcd(a,b);}
 #define print(x) cout<<x<<'\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
+void convert(ld &x)
+{
+    x*=(M_PI/180);
+}
 
 void solve()
 {
-    int n,m,k,cnt=1;cin>>n>>m>>k;
-    int x=0,y=0,left=k-1,right=n-k,sol=0;  
-    debug(left,right);
-
-    while (1)
-    {
-        if(x==left and y==right) break;
-        debug(x,y);
-        int dir=0;
-        if(y<right && x>=y) dir=1;
-        else if(x<left && x<=y) dir=-1;
-        else break;
-        int din_sol_lagbe=(dir==1) ? y+1 : x+1;
-        debug(dir,din_sol_lagbe);
-        if(sol>=m) break;
-        if(din_sol_lagbe+sol>m) break;
-        debug('a');
-        sol+=din_sol_lagbe;
-        cnt++;
-        if(dir==1) y++;
-        else x++;
-        debug(sol,cnt);
-    }
-    
-    cout<<cnt<<'\n';
+    ld s,x;cin>>s>>x;
+    y=180-45-x;
+    convert(y);
+    convert(x);
+    ld l=s/sqrtl(2);
+    ld lo=s/(2*sin(y));
 }
 
 int32_t main()

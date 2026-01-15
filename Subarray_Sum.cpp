@@ -22,34 +22,38 @@ inline ll lcm(ll a,ll b) {return (a*b)/__gcd(a,b);}
 #define print(x) cout<<x<<'\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
-
 void solve()
 {
-    int n,m,k,cnt=1;cin>>n>>m>>k;
-    int x=0,y=0,left=k-1,right=n-k,sol=0;  
-    debug(left,right);
+    int n,k,ans=-2e15;cin>>n>>k;
+    vector<int> v(n);
 
-    while (1)
+    for(auto &x : v) cin>>x;
+
+    for(int i=0;i<n;i++)
     {
-        if(x==left and y==right) break;
-        debug(x,y);
-        int dir=0;
-        if(y<right && x>=y) dir=1;
-        else if(x<left && x<=y) dir=-1;
-        else break;
-        int din_sol_lagbe=(dir==1) ? y+1 : x+1;
-        debug(dir,din_sol_lagbe);
-        if(sol>=m) break;
-        if(din_sol_lagbe+sol>m) break;
-        debug('a');
-        sol+=din_sol_lagbe;
-        cnt++;
-        if(dir==1) y++;
-        else x++;
-        debug(sol,cnt);
+        priority_queue<int> pq;
+        int sum=0,k_sum=0;
+
+        for(int j=i;j<n;j++)
+        {
+            sum+=v[j];
+            if(v[j]<0)
+            {
+                pq.push(v[j]);
+                k_sum+=v[j];
+
+                if(pq.size()>k)
+                {
+                    k_sum-=pq.top();
+                    pq.pop();
+                }
+            }
+
+            ans=max(ans,sum-k_sum);
+        }
     }
-    
-    cout<<cnt<<'\n';
+
+    cout<<ans<<'\n';
 }
 
 int32_t main()
@@ -63,7 +67,7 @@ int32_t main()
 
     for(int i=1;i<=t;i++)
     {
-        //cout<<"Case "<<i<<": ";
+        cout<<"Case "<<i<<": ";
         solve();
     }
 }

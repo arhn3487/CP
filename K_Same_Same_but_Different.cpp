@@ -22,34 +22,34 @@ inline ll lcm(ll a,ll b) {return (a*b)/__gcd(a,b);}
 #define print(x) cout<<x<<'\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
+int fact[20];
 
 void solve()
 {
-    int n,m,k,cnt=1;cin>>n>>m>>k;
-    int x=0,y=0,left=k-1,right=n-k,sol=0;  
-    debug(left,right);
+    int a[10]={},b[10]={};
 
-    while (1)
+    string s,t;cin>>s>>t;
+    for(auto x : s)
     {
-        if(x==left and y==right) break;
-        debug(x,y);
-        int dir=0;
-        if(y<right && x>=y) dir=1;
-        else if(x<left && x<=y) dir=-1;
-        else break;
-        int din_sol_lagbe=(dir==1) ? y+1 : x+1;
-        debug(dir,din_sol_lagbe);
-        if(sol>=m) break;
-        if(din_sol_lagbe+sol>m) break;
-        debug('a');
-        sol+=din_sol_lagbe;
-        cnt++;
-        if(dir==1) y++;
-        else x++;
-        debug(sol,cnt);
+        a[x-'0']++;
     }
-    
-    cout<<cnt<<'\n';
+    for(auto x : t)
+    {
+        b[x-'0']++;
+    }
+
+    int r1=fact[s.length()],r2=fact[t.length()];
+
+    for(auto x : a)
+    {
+        r1/=fact[x];
+    }
+    for(auto x : b)
+    {
+        r2/=fact[x];
+    }
+
+    yes(r1==r2)
 }
 
 int32_t main()
@@ -57,6 +57,13 @@ int32_t main()
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
+
+    fact[0]=1;
+    
+    for(int i=1;i<20;i++)
+    {
+        fact[i]=fact[i-1]*i;
+    }
 
     int t=1;
     cin>>t;

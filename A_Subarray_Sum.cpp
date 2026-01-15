@@ -21,35 +21,34 @@ inline ll lcm(ll a,ll b) {return (a*b)/__gcd(a,b);}
 #define all(v) v.begin(),v.end()
 #define print(x) cout<<x<<'\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
-
+vector<int> v;
 
 void solve()
 {
-    int n,m,k,cnt=1;cin>>n>>m>>k;
-    int x=0,y=0,left=k-1,right=n-k,sol=0;  
-    debug(left,right);
+    int n,k;cin>>n>>k;
+    v.resize(n);
+    int mx=0;
 
-    while (1)
+
+   for(auto &x : v) cin>>x;
+
+   debug(v);
+
+    for(int i=0;i<n;i++)
     {
-        if(x==left and y==right) break;
-        debug(x,y);
-        int dir=0;
-        if(y<right && x>=y) dir=1;
-        else if(x<left && x<=y) dir=-1;
-        else break;
-        int din_sol_lagbe=(dir==1) ? y+1 : x+1;
-        debug(dir,din_sol_lagbe);
-        if(sol>=m) break;
-        if(din_sol_lagbe+sol>m) break;
-        debug('a');
-        sol+=din_sol_lagbe;
-        cnt++;
-        if(dir==1) y++;
-        else x++;
-        debug(sol,cnt);
+        if(v[i]>0)
+        {
+            int tmp=0;
+            for(int j=i,cnt=k;j>=0 && cnt>=0;j--)
+            {
+                if(v[j]>=0) tmp+=v[j];
+                else cnt--;
+            }
+            mx=max(mx,tmp);
+        }
     }
-    
-    cout<<cnt<<'\n';
+
+    cout<<mx<<'\n';
 }
 
 int32_t main()
@@ -63,7 +62,7 @@ int32_t main()
 
     for(int i=1;i<=t;i++)
     {
-        //cout<<"Case "<<i<<": ";
+        cout<<"Case "<<i<<": ";
         solve();
     }
 }
