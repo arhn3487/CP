@@ -24,7 +24,30 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    debug("ARAFAT");
+    int n,m,h,last_reset=-1;cin>>n>>m>>h;
+    vector<int> v(n);
+    vector<array<int,2>> vv(m);
+
+    for(auto &x : v) cin>>x;
+
+    for(int i=0;i<m;i++)
+    {
+        int b,c;cin>>b>>c;
+        if(v[b-1]+c>h)
+        {
+            last_reset=i;
+        }
+        vv[i]={b,c};
+    }
+
+    for(int i=last_reset+1;i<m;i++)
+    {
+        auto [b,c]=vv[i];
+        v[b-1]+=c;
+    }
+
+    for(auto x : v) cout<<x<<' ';
+    cout<<'\n';
 }
 
 int32_t main() {

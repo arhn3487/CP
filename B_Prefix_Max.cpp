@@ -24,7 +24,16 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    debug("ARAFAT");
+    int n,mx=0;cin>>n;
+    vector<int> v(n);
+
+    for(auto x : v) 
+    {
+        cin>>x;
+        mx=max(mx,x);
+    }
+
+    cout<<mx*n<<'\n';
 }
 
 int32_t main() {

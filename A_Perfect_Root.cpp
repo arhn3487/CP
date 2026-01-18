@@ -22,9 +22,13 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 #define print(x) cout << x << '\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
+vector<int> v(25);
+
 void solve() 
 {
-    debug("ARAFAT");
+    int n;cin>>n;
+    for(int i=1;i<=n;i++) cout<<i<<' ';
+    cout<<'\n';
 }
 
 int32_t main() {
@@ -34,6 +38,12 @@ int32_t main() {
 
     int t = 1;
     cin >> t;
+
+    // for(int i=0;i<25;i++)
+    // {
+    //     v[i]=i*i;
+    // }
+
     for (int i = 1; i <= t; i++) {
         // cout << "Case " << i << ": ";
         solve();
