@@ -27,15 +27,18 @@ void solve()
     int n,m,h,last_reset=-1;cin>>n>>m>>h;
     vector<int> v(n);
     vector<array<int,2>> vv(m);
+    map<int,int>mp;
 
     for(auto &x : v) cin>>x;
 
     for(int i=0;i<m;i++)
     {
         int b,c;cin>>b>>c;
-        if(v[b-1]+c>h)
+        mp[b-1]+=c;
+        if(v[b-1]+mp[b-1]>h)
         {
             last_reset=i;
+            mp.clear();
         }
         vv[i]={b,c};
     }
