@@ -67,7 +67,7 @@ void solve()
 
     for(int i=0;i<n;i++)
     {
-        int mm=min(lower_bound(all(pos),v[i][2])-pos.begin(),*lower_bound(all(neg),v[i][1])-neg.begin())
+        int mm=min((lower_bound(all(pos),v[i][])-pos.begin()),(*lower_bound(all(neg)),v[i][1]-neg.begin()))
         morbe[mn]+=1;
     }
 

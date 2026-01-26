@@ -22,31 +22,24 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 #define print(x) cout << x << '\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
-bool check(int border,vector<int> &v)
-{
-    int next;
-
-    for(int i=0;i<v.size();i++)
-    {
-        next=v[i]-border;
-        if(next>=2 || next<0) return 0;
-        border=next;
-    }
-    return true;
-}
-
 void solve() 
 {
-    int n;cin>>n;
-    vector<int> v(n);
+    int n,h,l;cin>>n>>h>>l;
+    int cnt=0,a,c=0,d=0;
+    if(h>l) swap(h,l);
 
-    for(auto &x : v) cin>>x;
-
-    if(check(1,v) || check(0,v))
+    for(int i=0;i<n;i++)
     {
-        yes(1)
+        cin>>a;
+        
+        if(a<=h) c++;
+        else if(a<=l) d++;
+        
     }
-    else yes(0)
+
+    if(d>c) d=c;
+    debug(c,d);
+    cout<<d+(c-d)/2<<'\n';
 }
 
 int32_t main() {
@@ -55,7 +48,7 @@ int32_t main() {
     cout.tie(NULL);
 
     int t = 1;
-    
+    cin >> t;
     for (int i = 1; i <= t; i++) {
         // cout << "Case " << i << ": ";
         solve();
