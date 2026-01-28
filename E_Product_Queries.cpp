@@ -24,27 +24,37 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int n,ans=0;cin>>n;
-    vector<int> a(n),b(n);
-
-    for(auto &x : a) cin>>x;
-    for(auto &x : b) cin>>x;
-
-    sort(all(a));
-
-    for(int i=1;i<n;i++) b[i]+=b[i-1];
+    int n;cin>>n;
+    vector<bool> present(n+1,false);
+    vector<int> dp(n+1,-1);
 
     for(int i=0;i<n;i++)
     {
-        int need=b[i];
-        if(need>n) break;
-        int x=a[n-b[i]];
-        int score=x*(i+1);
-
-        ans=max(ans,score);
+        int a;cin>>a;
+        present[a]=true;
     }
 
-    print(ans)
+    for(int i=1;i<=n;i++)
+    {
+        if(present[i]) dp[i]=1;
+        else
+        {
+            int a=infinity;
+            for(int j=2;j*j<=i;j++)
+            {
+                if(i%j==0)
+                {
+                    debug(i,j);
+                    if(dp[j]!=-1 && dp[i/j]!=-1) a=min(a,dp[j]+dp[i/j]);
+                }
+            }
+
+            dp[i]=(a!=infinity) ? a : -1;
+        }
+    }
+
+    for(int i=1;i<=n;i++) cout<<dp[i]<<' ';
+    cout<<'\n';
 }
 
 int32_t main() {
