@@ -24,48 +24,17 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int n,cnt=0;cin>>n;
-    set<int> st;
+   int n,s,k;cin>>n>>s>>k;
 
-    for(int k=1;k*k<=n;k++)
-    {
-        if(n%k==0)
+   for(int i=0;i<=M;i++)
+   {
+        if((s+i*k)%n==0) 
         {
-            int f=k,s=n/k,t=n;
-
-            if(f>=2)
-            {
-                while (t%f==0) t/=f;
-                if(t%f==1) st.insert(f);
-            }
-            if(s>=2)
-            {
-                t=n;
-                while(t%s==0) t/=s;
-                if(t%s==1) st.insert(s);
-            }
+            cout<<i<<'\n';
+            return;
         }
-        //else if((n-1)%i==0)  cnt++;
-    }
-
-    n--;
-    for(int k=1;k*k<=n;k++)
-    {
-        if(n%k==0)
-        {
-            int f=k,s=n/k,t=n;
-            debug(k,f,s);
-            if(f>=2) 
-                if(n%f==0) st.insert(f);
-           
-            if(s>=2) 
-                if(n%s==0) st.insert(s);
-        }
-    }
-
-    debug(st);
-
-    cout<<st.size()<<'\n';
+   }
+   cout<<-1<<'\n';
 }
 
 int32_t main() {
@@ -74,7 +43,7 @@ int32_t main() {
     cout.tie(NULL);
 
     int t = 1;
-    //cin >> t;
+    cin >> t;
     for (int i = 1; i <= t; i++) {
         // cout << "Case " << i << ": ";
         solve();

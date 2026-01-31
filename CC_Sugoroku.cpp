@@ -24,48 +24,31 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int n,cnt=0;cin>>n;
-    set<int> st;
+    int n,m,cc;
+    string s;
+    cin>>n>>m>>s;
+    cc=n;
+    vector<int> ans;
 
-    for(int k=1;k*k<=n;k++)
+    for(int i=n;i>0;)
     {
-        if(n%k==0)
+        int x=max(i-m,0LL);
+        while (s[x]!='0') x++;
+        
+        if(x==i)
         {
-            int f=k,s=n/k,t=n;
-
-            if(f>=2)
-            {
-                while (t%f==0) t/=f;
-                if(t%f==1) st.insert(f);
-            }
-            if(s>=2)
-            {
-                t=n;
-                while(t%s==0) t/=s;
-                if(t%s==1) st.insert(s);
-            }
+            cout<<-1<<'\n';
+            return;
         }
-        //else if((n-1)%i==0)  cnt++;
+
+        ans.push_back(i-x);
+        i=x;
     }
 
-    n--;
-    for(int k=1;k*k<=n;k++)
-    {
-        if(n%k==0)
-        {
-            int f=k,s=n/k,t=n;
-            debug(k,f,s);
-            if(f>=2) 
-                if(n%f==0) st.insert(f);
-           
-            if(s>=2) 
-                if(n%s==0) st.insert(s);
-        }
-    }
+    reverse(all(ans));
 
-    debug(st);
-
-    cout<<st.size()<<'\n';
+    for(auto x : ans) cout<<x<<' ';
+    cout<<'\n';
 }
 
 int32_t main() {

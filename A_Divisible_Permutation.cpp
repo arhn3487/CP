@@ -24,48 +24,44 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int n,cnt=0;cin>>n;
-    set<int> st;
+    int n;cin>>n;
+    
+    vector<int> v(n+1);
 
-    for(int k=1;k*k<=n;k++)
+    if(n%2==0)
     {
-        if(n%k==0)
+        int t1=ceil(n/2.0),t2=t1+1;
+        for(int i=1;i<=n;i+=2)
         {
-            int f=k,s=n/k,t=n;
-
-            if(f>=2)
-            {
-                while (t%f==0) t/=f;
-                if(t%f==1) st.insert(f);
-            }
-            if(s>=2)
-            {
-                t=n;
-                while(t%s==0) t/=s;
-                if(t%s==1) st.insert(s);
-            }
+            v[i]=t1;
+            t1--;
         }
-        //else if((n-1)%i==0)  cnt++;
-    }
 
-    n--;
-    for(int k=1;k*k<=n;k++)
-    {
-        if(n%k==0)
+        for(int i=2;i<=n;i+=2)
         {
-            int f=k,s=n/k,t=n;
-            debug(k,f,s);
-            if(f>=2) 
-                if(n%f==0) st.insert(f);
-           
-            if(s>=2) 
-                if(n%s==0) st.insert(s);
+            v[i]=t2;
+            t2++;
+        }
+    }
+    else
+    {
+        int t1=ceil(n/2.0),t2=t1-1;
+        for(int i=1;i<=n;i+=2)
+        {
+            v[i]=t1;
+            t1++;
+        }
+        for(int i=2;i<=n;i+=2)
+        {
+            v[i]=t2;
+            t2--;
         }
     }
 
-    debug(st);
+    
 
-    cout<<st.size()<<'\n';
+    for(int i=1;i<=n;i++) cout<<v[i]<<' ';
+    cout<<'\n';
 }
 
 int32_t main() {
@@ -74,7 +70,7 @@ int32_t main() {
     cout.tie(NULL);
 
     int t = 1;
-    //cin >> t;
+    cin >> t;
     for (int i = 1; i <= t; i++) {
         // cout << "Case " << i << ": ";
         solve();

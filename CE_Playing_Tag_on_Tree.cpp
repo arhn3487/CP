@@ -22,50 +22,60 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 #define print(x) cout << x << '\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
+vector<vector<int>> adj;
+
+vector<int> bfs(int st)
+{
+    queue<int> q;
+    q.push(st);
+    vector<int> ans(adj.size(),-1);
+    ans[st]=0;
+
+    while (q.size())
+    {
+        int p=q.front();
+        q.pop();
+
+        for(auto x : adj[p])
+        {
+            if(ans[x]==-1)
+            {
+                q.push(x);
+                ans[x]=ans[p]+1;
+            }
+        }
+    }
+    return ans;
+}
+
 void solve() 
 {
-    int n,cnt=0;cin>>n;
-    set<int> st;
+    int n,u,v,ans=0;
+    cin>>n>>u>>v;
+    u--;v--;
+    adj.resize(n);
+    int m=n-1;
 
-    for(int k=1;k*k<=n;k++)
+    for(int i=0;i<m;i++)
     {
-        if(n%k==0)
-        {
-            int f=k,s=n/k,t=n;
-
-            if(f>=2)
-            {
-                while (t%f==0) t/=f;
-                if(t%f==1) st.insert(f);
-            }
-            if(s>=2)
-            {
-                t=n;
-                while(t%s==0) t/=s;
-                if(t%s==1) st.insert(s);
-            }
-        }
-        //else if((n-1)%i==0)  cnt++;
+        int a,b;cin>>a>>b;
+        a--,b--;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
     }
 
-    n--;
-    for(int k=1;k*k<=n;k++)
+    vector<int> disu=bfs(u);
+    vector<int>disv=bfs(v);
+
+    for(int i=0;i<n;i++)
     {
-        if(n%k==0)
+        if(disu[i]<disv[i])
         {
-            int f=k,s=n/k,t=n;
-            debug(k,f,s);
-            if(f>=2) 
-                if(n%f==0) st.insert(f);
-           
-            if(s>=2) 
-                if(n%s==0) st.insert(s);
+            ans=max(ans,disv[i]-1);
         }
     }
 
-    debug(st);
-
-    cout<<st.size()<<'\n';
+    cout<<ans<<'\n';
 }
 
 int32_t main() {

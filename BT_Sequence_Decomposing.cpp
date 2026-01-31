@@ -27,45 +27,22 @@ void solve()
     int n,cnt=0;cin>>n;
     set<int> st;
 
-    for(int k=1;k*k<=n;k++)
+    for(int i=0;i<n;i++)
     {
-        if(n%k==0)
+        int a;cin>>a;
+        auto it=st.lower_bound(a-1);
+        if(it==st.end())
         {
-            int f=k,s=n/k,t=n;
-
-            if(f>=2)
-            {
-                while (t%f==0) t/=f;
-                if(t%f==1) st.insert(f);
-            }
-            if(s>=2)
-            {
-                t=n;
-                while(t%s==0) t/=s;
-                if(t%s==1) st.insert(s);
-            }
+            cnt++;
         }
-        //else if((n-1)%i==0)  cnt++;
+        else
+        {
+            if(*it==a) cnt++;
+        }
+        st.insert(a);
     }
 
-    n--;
-    for(int k=1;k*k<=n;k++)
-    {
-        if(n%k==0)
-        {
-            int f=k,s=n/k,t=n;
-            debug(k,f,s);
-            if(f>=2) 
-                if(n%f==0) st.insert(f);
-           
-            if(s>=2) 
-                if(n%s==0) st.insert(s);
-        }
-    }
-
-    debug(st);
-
-    cout<<st.size()<<'\n';
+    cout<<cnt<<'\n';
 }
 
 int32_t main() {
