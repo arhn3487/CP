@@ -24,28 +24,35 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int n,cnt=0;cin>>n;
-    multiset<int> st;
+    int n,c,sum=0,ans=0;cin>>n>>c;
+    vector<array<int,2>> v(n);
+
+    for(auto &[x,y] : v) cin>>x>>y;
 
     for(int i=0;i<n;i++)
     {
-        int a;cin>>a;
-        auto it=st.lower_bound(a);
-        //it--;
-        if(it==st.begin())
+        sum+=v[i][1];
+        ans=max(ans,sum-v[i][0]);
+        
+        for(int j=n-1;j>i;j--)
         {
-            cnt++;
+            int sum2=0;
+            for(int k=j;k<n;k++)
+            {
+                sum2+=v[k][1];
+            }
+            debug(c-v[j][0],sum,sum2);
+            int a = v[i][0];       
+            int b = c - v[j][0];   
+            int dist = a + b + min(a, b);
+
+
+            //int dist=v[i][0]+(c-v[j][0])+min(v[j][0],c-v[i][0]);
+            ans=max(ans,sum+sum2-dist);
         }
-        else
-        {
-            it--;
-            st.erase(it);
-        }
-        st.insert(a);
-        debug(st);
     }
 
-    cout<<cnt<<'\n';
+    cout<<ans<<'\n';
 }
 
 int32_t main() {
@@ -54,7 +61,7 @@ int32_t main() {
     cout.tie(NULL);
 
     int t = 1;
-    //cin >> t;
+    
     for (int i = 1; i <= t; i++) {
         // cout << "Case " << i << ": ";
         solve();

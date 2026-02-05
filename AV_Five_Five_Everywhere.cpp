@@ -11,7 +11,7 @@ using namespace std;
 #define ld long double
 #define int long long
 const int M = 1e9 + 7;
-const int N = 1e6 + 5;
+const int N = 55556;
 const ll infinity = LLONG_MAX;
 int dx[] = {1, 0, -1, 0, 1, 1, -1, -1}; //Right, Down, Left, Up, Diagonals
 int dy[] = {0, -1, 0, 1, 1, -1, 1, -1};
@@ -22,30 +22,27 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 #define print(x) cout << x << '\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
+
 void solve() 
 {
-    int n,cnt=0;cin>>n;
-    multiset<int> st;
+    int n;cin>>n;
+    vector<bool> primes(N,true);
+    vector<int> v;
 
-    for(int i=0;i<n;i++)
+    for(int i=2;i*i<N;i++)
     {
-        int a;cin>>a;
-        auto it=st.lower_bound(a);
-        //it--;
-        if(it==st.begin())
+        if(primes[i])
         {
-            cnt++;
+            v.push_back(i);
+            for(int j=i*i;j<N;j+=i)
+            {
+                primes[j]=false;
+            }
         }
-        else
-        {
-            it--;
-            st.erase(it);
-        }
-        st.insert(a);
-        debug(st);
     }
 
-    cout<<cnt<<'\n';
+    debug(v);
+
 }
 
 int32_t main() {
@@ -54,7 +51,7 @@ int32_t main() {
     cout.tie(NULL);
 
     int t = 1;
-    //cin >> t;
+    
     for (int i = 1; i <= t; i++) {
         // cout << "Case " << i << ": ";
         solve();

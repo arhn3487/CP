@@ -24,25 +24,43 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int n,cnt=0;cin>>n;
-    multiset<int> st;
+    int n,d,a,cnt=0,s=0;cin>>n>>d>>a;
+    deque<array<int,2>> dq;
+    map<int,int> mp;
 
     for(int i=0;i<n;i++)
     {
-        int a;cin>>a;
-        auto it=st.lower_bound(a);
-        //it--;
-        if(it==st.begin())
+        int p,q;cin>>p>>q;
+        mp[p]=max(q,mp[p]);
+    }
+
+    debug(mp);
+
+    for(auto [x,y] : mp)
+    {
+        while(dq.size() && dq.front()[0]<x) 
         {
-            cnt++;
+            s-=dq.front()[1];
+            dq.pop_front();
         }
-        else
+        //int sz=dq.size();
+        y-=s;
+
+        if(y>0)
         {
-            it--;
-            st.erase(it);
+            int boom_needed=ceil(y/(a*1.0));
+            cnt+=boom_needed;
+            s+=boom_needed*a;
+            dq.push_back({x+2*d,boom_needed*a});
         }
-        st.insert(a);
-        debug(st);
+        
+        // while(y>0)
+        // {
+        //     dq.push_back(x+2*d);
+        //     cnt++;
+        //     y-=a;
+        // }   
+        debug(dq,x,cnt);
     }
 
     cout<<cnt<<'\n';
@@ -54,7 +72,7 @@ int32_t main() {
     cout.tie(NULL);
 
     int t = 1;
-    //cin >> t;
+    
     for (int i = 1; i <= t; i++) {
         // cout << "Case " << i << ": ";
         solve();

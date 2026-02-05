@@ -24,28 +24,28 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int n,cnt=0;cin>>n;
-    multiset<int> st;
+    int n,m,ans=0;cin>>n>>m;
+    vector<vector<int>> v(m+1);
 
     for(int i=0;i<n;i++)
     {
-        int a;cin>>a;
-        auto it=st.lower_bound(a);
-        //it--;
-        if(it==st.begin())
-        {
-            cnt++;
-        }
-        else
-        {
-            it--;
-            st.erase(it);
-        }
-        st.insert(a);
-        debug(st);
+        int a,b;cin>>a>>b;
+        if(a<=m) v[a].push_back(b);
     }
 
-    cout<<cnt<<'\n';
+    priority_queue<int> pq;
+
+    for(int i=1;i<=m;i++)
+    {
+        for(auto x : v[i]) pq.push(x);
+        if(pq.size())
+        {
+            ans+=pq.top();
+            pq.pop();
+        }
+    }
+
+    cout<<ans<<'\n';
 }
 
 int32_t main() {
@@ -54,7 +54,7 @@ int32_t main() {
     cout.tie(NULL);
 
     int t = 1;
-    //cin >> t;
+    
     for (int i = 1; i <= t; i++) {
         // cout << "Case " << i << ": ";
         solve();
