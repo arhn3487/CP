@@ -11,7 +11,7 @@ using namespace std;
 #define ld long double
 #define int long long
 const int M = 1e9 + 7;
-const int N = 55556;
+const int N = 1e6 + 5;
 const ll infinity = LLONG_MAX;
 int dx[] = {1, 0, -1, 0, 1, 1, -1, -1}; //Right, Down, Left, Up, Diagonals
 int dy[] = {0, -1, 0, 1, 1, -1, 1, -1};
@@ -22,14 +22,57 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 #define print(x) cout << x << '\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
-vector<int> v=
-{3,13,23,43,53,73,83,103,113,163,173,193,223,233,263,283,293,313,353,373,383,433,443,463,503,523,563,593,613,643,653,673,683,733,743,773,823,853,863,883,953,983,1013,1033,1063,1093,1103,1123,1153,1163,1193,1213,1223,1283,1303,1373,1423,1433,1453,1483};
+vector<vector<int>> adj;
+set<int> st;
+vector<bool> vis;
 
+void dfs(int u,int p)
+{
+    st.insert(u);
+    if(vis[u]) return;
+    vis[u]=true;
+    for(auto x : adj[u])
+    {
+        if(x!=p)
+        {
+            dfs(x,u);
+        }
+    }
+}
 
 void solve() 
 {
-    int n;cin>>n;
-    for(int i=0;i<n;i++) cout<<v[i]<<' ';
+    int n,m,cnt=0;cin>>n>>m;
+    adj.resize(n+1);
+    vector<int> p(n+1);
+    vis.assign(n+1,false);
+
+    for(int i=1;i<=n;i++)
+    {
+        int a;cin>>a;
+        p[i]=a;
+    }
+
+
+    for(int i=0;i<m;i++)
+    {
+        int u,v;cin>>u>>v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    for(int i=1;i<=n;i++)
+    {
+        if(!vis[i]) dfs(i,-1);
+        debug(st);
+        for(auto x : st)
+        {
+            if(st.find(p[x])!=st.end()) cnt++;
+        }
+        st.clear();
+    }
+
+    cout<<cnt<<'\n';
 }
 
 int32_t main() {

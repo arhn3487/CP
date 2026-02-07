@@ -10,8 +10,8 @@ using namespace std;
 #define ll long long
 #define ld long double
 #define int long long
-const int M = 1e9 + 7;
-const int N = 55556;
+const int M = 2019;
+const int N = 1e6 + 5;
 const ll infinity = LLONG_MAX;
 int dx[] = {1, 0, -1, 0, 1, 1, -1, -1}; //Right, Down, Left, Up, Diagonals
 int dy[] = {0, -1, 0, 1, 1, -1, 1, -1};
@@ -22,14 +22,25 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 #define print(x) cout << x << '\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
-vector<int> v=
-{3,13,23,43,53,73,83,103,113,163,173,193,223,233,263,283,293,313,353,373,383,433,443,463,503,523,563,593,613,643,653,673,683,733,743,773,823,853,863,883,953,983,1013,1033,1063,1093,1103,1123,1153,1163,1193,1213,1223,1283,1303,1373,1423,1433,1453,1483};
-
-
 void solve() 
 {
-    int n;cin>>n;
-    for(int i=0;i<n;i++) cout<<v[i]<<' ';
+    string s;cin>>s;
+    int p10=1,pre=0,ans=0;
+    map<int,int> mp;
+    mp[0]=1;
+
+    int n=s.length();
+
+    for(int i=n-1;i>=0;i--)
+    {
+        int d=s[i]-'0';
+        int num=(d*p10+pre)%M;
+        ans+=mp[num];
+        mp[num]++;
+        pre=num;
+        p10=(p10*10)%M;
+    }
+    print(ans)
 }
 
 int32_t main() {

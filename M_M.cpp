@@ -1,43 +1,56 @@
-#pragma GCC optimize("O3")
-#include<bits/stdc++.h>
-#ifndef ONLINE_JUDGE
-#include "D:/debug.h"
-#else
-#define dbg(x...)
-#define dbgc(x...)
-#endif
+#include <bits/stdc++.h>
+
 using namespace std;
 
-#define ll long long
-const int M=1e9+7;
-const ll infinity = LLONG_MAX;
-int dx[]={1,0,-1,0,1,1,-1,-1};//Right,Down,Left,Up,Right-Up,Right-Down,Left-Up,Left-Down
-int dy[]={0,-1,0,1,1,-1,1,-1};
-inline ll lcm(ll a,ll b) {return (a*b)/__gcd(a,b);}
+#define int long long
 
-#define rall(v) v.rbegin(),v.rend()
-#define all(v) v.begin(),v.end()
-#define print(x) cout<<x<<'\n';
-#define yes(x) cout << ((x) ? "Yes\n" : "No\n");
+void solve() {
+    int N;
+    if (!(cin >> N)) return;
 
-void solve()
-{
-    int n;cin>>n;
-    if(n==3 || n==4) cout<<""
+    // We track the range of values that the CURRENT player is dealing with.
+    // At the start, Takahashi is at [1, 1].
+    int left = 1, right = 1;
+
+    while (true) {
+        // --- Takahashi's Turn ---
+        // He wants to move to a state where Aoki is forced to go over N.
+        // If he moves from [left, right], the new range is [left*2, right*2 + 1].
+        left = left * 2;
+        right = right * 2 + 1;
+
+        if (N < left) {
+            // Takahashi was forced to move to a number > N. Takahashi loses.
+            cout << "Aoki" << endl;
+            return;
+        }
+        if (N <= right) {
+            // Takahashi can pick a number in the range [left, N] such that
+            // every move Aoki makes will result in a number > N.
+            cout << "Takahashi" << endl;
+            return;
+        }
+
+        // --- Aoki's Turn ---
+        left = left * 2;
+        right = right * 2 + 1;
+
+        if (N < left) {
+            // Aoki was forced to move to a number > N. Aoki loses.
+            cout << "Takahashi" << endl;
+            return;
+        }
+        if (N <= right) {
+            // Aoki can pick a number that forces Takahashi to go over N.
+            cout << "Aoki" << endl;
+            return;
+        }
+    }
 }
 
-int main()
-{
+int32_t main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    cout.tie(NULL);
-
-    int t=1;
-    cin>>t;
-
-    for(int i=1;i<=t;i++)
-    {
-        //cout<<"Case "<<i<<": ";
-        solve();
-    }
+    solve();
+    return 0;
 }

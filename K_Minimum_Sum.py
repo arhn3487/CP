@@ -1,26 +1,37 @@
-import math
-import os
 import sys
-
-def dbg(*args):
-    if 'ONLINE_JUDGE' in os.environ:
-        return
-    import traceback
-    stack = traceback.extract_stack()
-    line = stack[-2].line
-    names = line[line.find('dbg(')+4 : line.rfind(')')]
-    print(f"[{names}]:", *args, file=sys.stderr)
+input = sys.stdin.readline
 
 def solve():
-    
-    return
+    n, a= map(int, input().split())
+    k=int(input())
+    v = [0] + list(map(int, input().split()))
 
-def main():
-    t = int(input())
-    for i in range(1, t + 1):
-        # print(f"Case {i} : ")
-        solve()
-    return
+    vis = [0] * (n + 1)
+    sz = -1
+
+    for i in range(1, k + 1):
+        if vis[a]:
+            k -= i
+            sz = i - vis[a] 
+            a = v[a]
+            break
+        vis[a] = i
+        a = v[a]
+        if i == k:
+            print(a)
+            return
+
+    if k == 0:
+        print(a)
+        return
+
+    k %= sz
+    while k > 0:
+        a = v[a]
+        k -= 1
+
+    print(a)
+
 
 if __name__ == "__main__":
-    main()
+    solve()

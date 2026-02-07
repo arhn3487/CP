@@ -22,54 +22,51 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 #define print(x) cout << x << '\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
+vector<vector<int>> adj;
+
 void solve() 
 {
-    int n,a,k,sz=-1;cin>>n>>a>>k;
-    vector<int> v(n+1);
-    vector<bool> vis(n+1,false);
+    int n,m,ans=0,vis=0;cin>>n>>m;
+    adj.resize(n+1);
+    vector<int> a(n+1),total(n+1);
+    vector<bool> vv(n+1,false);
 
-    for(int i=1;i<=n;i++) cin>>v[i];
+    for(int i=1;i<=n;i++) cin>>a[i];
 
-    debug(v);
-
-    for(int i=1;i<=k;i++)
+    for(int i=0;i<m;i++)
     {
-        debug(a,i);
-        if(vis[a])
+        int u,v;cin>>u>>v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
+
+    for(int i=1;i<=n;i++)
+    {
+        int sum=0;
+        for(auto x : adj[i]) sum+=a[x];
+        pq.push({sum,i});
+        total[i]=sum;
+    }
+
+    while(vis<n)
+    {
+        while (vv[pq.top().second]) pq.pop();
+        ans=max(ans,pq.top().first);
+        vv[pq.top().second]=true;
+        int kk=pq.top().second;
+        pq.pop();
+
+        for(auto x : adj[kk])
         {
-            a=v[a];
-            k-=i;
-            sz=i-vis[a];
-            break;
+            total[x]-=a[kk];
+            pq.push({total[x],x});
         }
-        vis[a]=true;
-        a=v[a];
-        debug(a);
-        if(i==k)
-        {
-            cout<<a<<'\n';
-            return;
-        }
+        vis++;
     }
+    print(ans)
 
-    debug(sz);
-
-    if(k==0)
-    {
-        cout<<a<<'\n';
-        return;
-    }
-
-    k%=sz;
-
-    while(k--)
-    {
-        a=v[a];
-    }
-
-    print(a)
-
-    debug(sz,k);
 }
 
 int32_t main() {
@@ -78,7 +75,7 @@ int32_t main() {
     cout.tie(NULL);
 
     int t = 1;
-    
+
     for (int i = 1; i <= t; i++) {
         // cout << "Case " << i << ": ";
         solve();
