@@ -1,67 +1,64 @@
 #pragma GCC optimize("O3")
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 #ifndef ONLINE_JUDGE
 #include "D:/debug.h"
 #else
-#define dbg(x...)
-#define dbgc(x...)
+#define debug(x...)
 #endif
 using namespace std;
 
 #define ll long long
-const int M=1e9+7;
+#define ld long double
+#define int long long
+const int M = 1e9 + 7;
+const int N = 1e6 + 5;
 const ll infinity = LLONG_MAX;
-int dx[]={1,0,-1,0,1,1,-1,-1};//Right,Down,Left,Up,Right-Up,Right-Down,Left-Up,Left-Down
-int dy[]={0,-1,0,1,1,-1,1,-1};
-inline ll lcm(ll a,ll b) {return (a*b)/__gcd(a,b);}
+int dx[] = {1, 0, -1, 0, 1, 1, -1, -1}; //Right, Down, Left, Up, Diagonals
+int dy[] = {0, -1, 0, 1, 1, -1, 1, -1};
+inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
-#define rall(v) v.rbegin(),v.rend()
-#define all(v) v.begin(),v.end()
-#define print(x) cout<<x<<'\n';
+#define rall(v) v.rbegin(), v.rend()
+#define all(v) v.begin(), v.end()
+#define print(x) cout << x << '\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
-void solve()
+void solve() 
 {
-    ll n,a,b,d=0,cnt=0;cin>>n>>a>>b;
-    vector<ll> h(n);
-    priority_queue<int> pq;
+    int n,a,b,lo=0,hi=1e9+7;
+    cin>>n>>a>>b;
+    int diff=a-b;
+    vector<int> v(n);
 
-    for(int i=0;i<n;i++)
+    for(auto &x : v) cin>>x;
+
+    while (lo<=hi)
     {
-        cin>>h[i];
-        pq.push(h[i]);
-    }
-
-    while(pq.size())
-    {
-        int tmp=pq.top();
-        pq.pop();
-        int tmp2=tmp-d;
-        d+=b;
-
-        if(tmp2>0)
+        int mid=(lo+hi)/2,ext=0;
+        for(auto x : v)
         {
-            cnt++;
-            pq.push(tmp);
+            if(b*mid>=x) continue;
+            x-=b*mid;
+            ext+=ceil(x*1.0/diff);
         }
-        else break;
+
+        if(ext>mid) lo=mid+1;
+        else hi=mid-1;
     }
 
-    cout<<cnt<<'\n';
+    print(lo)
+    
 }
 
-int main()
-{
+int32_t main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
 
-    int t=1;
-    //cin>>t;
-
-    for(int i=1;i<=t;i++)
-    {
-        //cout<<"Case "<<i<<": ";
+    int t = 1;
+    
+    for (int i = 1; i <= t; i++) {
+        // cout << "Case " << i << ": ";
         solve();
     }
+    return 0;
 }

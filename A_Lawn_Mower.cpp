@@ -24,22 +24,8 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int k;cin>>k;
-    vector<int> v(50,0);
-
-    int q=k/50,rem=k%50;
-
-    for(int i=0;i<50;i++) v[i]+=(48+q);
-
-    for(int i=0;i<50;i++)
-    {
-        if(i<rem) v[i]+=(51-rem);
-        else v[i]-=rem;
-    }
-
-    cout<<50<<'\n';
-    for(int i=0;i<50;i++) cout<<v[i]<<' ';
-
+    int n,k;cin>>n>>k;
+    cout<<(n/k)*(k-1)+(n%k)<<'\n';
 }
 
 int32_t main() {
@@ -48,6 +34,7 @@ int32_t main() {
     cout.tie(NULL);
 
     int t = 1;
+    cin >> t;
     for (int i = 1; i <= t; i++) {
         // cout << "Case " << i << ": ";
         solve();
