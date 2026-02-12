@@ -31,7 +31,57 @@ void solve()
     {
         string s;cin>>s;
         for(int j=0;j<n;j++)
-            v[i][s[j]-'a']=true;
+            v[j][s[j]-'a']=true;
+    }
+
+    //debug(v);
+
+    set<int> div;
+    
+    for(int i=1;i*i<=n;i++)
+    {
+        if(n%i==0)
+        {
+            div.insert(i);
+            div.insert(n/i);
+        }
+    }
+    debug(div);
+
+    debug(v[0][0],v[0][1]);
+
+    for(auto x : div)
+    {
+        
+        string ss="";
+        for(int i=0;i<x;i++)
+        {
+            set<int> st;
+            for(int i=0;i<26;i++) st.insert(i);
+            for(int j=i;j<n;j+=x)
+            {
+                for(int k=0;k<26;k++)
+                {
+                    if(!v[j][k] && st.count(k)) st.erase(k);
+                }
+            }
+            debug(st,x);
+            if(!st.empty()) ss+=char(*st.begin()+'a');
+            else 
+            {
+                ss="";
+                break;
+            }
+        }
+
+        if(ss!="")
+        {
+            debug(ss,x);
+            int nn=n/ss.length();
+            for(int i=0;i<nn;i++) cout<<ss;
+            cout<<'\n';
+            return;
+        }
     }
 }
 

@@ -7,42 +7,75 @@
 #endif
 using namespace std;
 
+#define ll long long
+#define ld long double
 #define int long long
+const int M = 1e9 + 7;
+const int N = 1e6 + 5;
+const ll infinity = LLONG_MAX;
+int dx[] = {1, 0, -1, 0, 1, 1, -1, -1}; //Right, Down, Left, Up, Diagonals
+int dy[] = {0, -1, 0, 1, 1, -1, 1, -1};
+inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
-int get_best(int fixed, int target) {
-    int res = 0;
-    for (int i = 0; i < 40; i++) {
-        int bit = (1LL << i);
-        if (fixed & bit) continue;
-        int c1 = (res | bit), c2 = (res | (1LL << (i + 1))), c3 = (res | bit | (1LL << (i + 1))), c4 = (res == 0) ? bit : res;
-        int a = abs(c1 - target), b = abs(c2 - target), c = abs(c3 - target), d = abs(c4 - target);
-        int k = min({a, b, c, d});
-        if ((a == k) && (res&fixed==0)) res = c1;
-        else if ((b == k) && (res&fixed==0)) res = c2;
-        else if ((c == k) && (res&fixed==0)) res = c3;
-        else res = c4;
+#define rall(v) v.rbegin(), v.rend()
+#define all(v) v.begin(), v.end()
+#define print(x) cout << x << '\n';
+#define yes(x) cout << ((x) ? "YES\n" : "NO\n");
+
+void solve() 
+{
+    int x,y;cin>>x>>y;
+    int p1=x,q1=y,p2=x,q2=y;
+    int ly=log2l(y),lx=log2l(x);
+
+    if(x==0 && y==0) 
+    {
+        cout<<"0 0\n";
+        return;
     }
-    return res;
-}
 
-void solve() {
-    int x, y; cin >> x >> y;
+    if((1ll<<lx)==x && (1LL<<ly)==y && x==y)
+    {
+        //100 4 4
+        //011
+        cout<<x<<' '<<x-1<<'\n';
+        return;
+    }
+
+    if((1ll<<lx)==(x+1) && (1LL<<ly)==(y+1) && x==y)
+    {
+        //100 4 4
+        //011
+        cout<<x<<' '<<x-1<<'\n';
+        return;
+    }
+    debug("ARAFAT");
     
-    int q1 = get_best(x, y);
-    int p2 = get_best(y, x);
-
-    if (abs(q1 - y) <= abs(p2 - x)) {
-        cout << x << ' ' << q1 << '\n';
-    } else {
-        cout << p2 << ' ' << y << '\n';
+    for(int i=0;i<60;i++)
+    {
+        int bit=(1LL<<i);
+        if(((x&bit) && (y&bit))) q1=q1&(~bit);
     }
+    for(int i=0;i<60;i++)
+    {
+        int bit=(1LL<<i);
+        if(((x&bit) && (y&bit))) p1=p1&(~bit);
+    }
+
+    if(abs(x-p1)>abs(y-q1)) cout<<x<<' '<<q1<<'\n';
+    else cout<<p1<<' '<<y<<'\n';
 }
 
 int32_t main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
+    cout.tie(NULL);
+
     int t = 1;
     cin >> t;
-    while (t--) solve();
+    for (int i = 1; i <= t; i++) {
+        // cout << "Case " << i << ": ";
+        solve();
+    }
     return 0;
 }

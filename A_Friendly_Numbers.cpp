@@ -20,43 +20,35 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 #define rall(v) v.rbegin(), v.rend()
 #define all(v) v.begin(), v.end()
 #define print(x) cout << x << '\n';
-#define yes(x) cout << ((x) ? "YES\n" : "NO\n");
+#define yes(x) cout << ((x) ? "10\n" : "0\n");
 
-long long power_with_mod(long long base, long long exp, long long mod) {
-    long long res = 1;
-    base %= mod; 
-
-    while (exp > 0) {
-        if (exp % 2 == 1) { 
-            res = (res * base) % mod;
-        }
-        base = (base * base) % mod; 
-        exp >>= 1; 
-    }
-    
-    return res;
-}
-
-void solve() 
+void solve()
 {
-   int n,s,k;cin>>n>>s>>k;
-
-//    for(int i=0;i<=M;i++)
-//    {
-//         if((s+i*k)%n==0) 
-//         {
-//             cout<<i<<'\n';
-//             return;
-//         }
-//    }
-//    cout<<-1<<'\n';
-
-    int sp=n-s;
-    if(gcd(k,n)!=1) cout<<-1<<'\n';
-    else
+    map<int,int> mp;
+    for(int i=0;i<1e5+2;i++)
     {
-        cout<<s*(power_with_mod(k,,n-2))
+        int t=i;
+        int s=0;
+        while(t)
+        {
+            s+=t%10;
+            t/=10;
+        }
+        mp[i-s]++;
     }
+
+    int t=0;
+    vector<int> v;
+
+    while(1)
+    {
+
+        t+=9;
+        if(mp.find(t)==mp.end()) v.push_back(t);
+        if(t>1e+2) break;
+    }
+
+    debug(v);
 }
 
 int32_t main() {
@@ -65,7 +57,7 @@ int32_t main() {
     cout.tie(NULL);
 
     int t = 1;
-    cin >> t;
+    //cin >> t;
     for (int i = 1; i <= t; i++) {
         // cout << "Case " << i << ": ";
         solve();
