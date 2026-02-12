@@ -20,25 +20,34 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 #define rall(v) v.rbegin(), v.rend()
 #define all(v) v.begin(), v.end()
 #define print(x) cout << x << '\n';
-#define yes(x) cout << ((x) ? "YES\n" : "NO\n");
+#define yes(x) cout << ((x) ? "Bob\n" : "Alice\n");
 
 void solve() 
 {
     int x,y,d1=0,d2=0;cin>>x>>y;
-    int g=__gcd(x,y);
+    int a=3*x-2*y;
+    if(a<0)
+    {
+        yes(0)
+        return;
+    }
+    x-=a;
+    y-=a;
+    if(x<=0 or y<=0)
+    {
+        yes(0)
+        return;
+    }
+    int g=gcd(x,y);
     x/=g;
     y/=g;
-    x-=2;
-    y-=3;
-
-    yes(x==y or x+1==y)
-    
+    yes((x==2) && (y==3))
 }
 
 int32_t main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
+    //ios_base::sync_with_stdio(false);
+    // cin.tie(NULL);
+    // cout.tie(NULL);
 
     int t = 1;
     cin >> t;
