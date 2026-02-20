@@ -25,7 +25,7 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 void solve() 
 {
     int n,ans=0;cin>>n;
-    vector<int> v(n+1),ch(n+1,0);
+    vector<int> v(n+1),ch(n+1,1);
 
     for(int i=0;i<n;i++) cin>>v[i];
 
@@ -33,33 +33,29 @@ void solve()
 
     v[n]=1000;
 
-    for(int i=1;i<n;i++)
+    for(int i=1;i<=n;i++)
     {
         //debug("ARAFAT");
         if((v[i-1]==7-v[i]) or (v[i-1]==v[i])) 
         {
-            ch[i]=1;
-            ch[i-1]=1;
+            ch[i]+=ch[i-1];
         }
-        if(v[i+1]==7-v[i] or v[i+1]==v[i]) 
-        {
-            ch[i]=1;
-            ch[i+1]=1;
-        }
+        else ans+=ch[i-1]/2;
+        //debug(ans,ch);
     }
 
     
-    for(int i=1;i<n;i++)
-    {
-        if(ch[i]==0) continue;
-        ch[i]+=ch[i-1];
-    }
+    // for(int i=1;i<n;i++)
+    // {
+    //     if(ch[i]==0) continue;
+    //     ch[i]+=ch[i-1];
+    // }
     debug(ch);
 
-    for(int i=1;i<=n;i++)
-    {
-        if(ch[i]==0) ans+=ch[i-1]/2;
-    }
+    // for(int i=1;i<=n;i++)
+    // {
+    //     if(ch[i]==0) ans+=ch[i-1]/2;
+    // }
 
     //ans+=ch[n-1]/2;
 

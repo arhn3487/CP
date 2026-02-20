@@ -1,97 +1,95 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
+#pragma GCC optimize("O3")
+#include <bits/stdc++.h>
+#ifndef ONLINE_JUDGE
+#include "D:/debug.h"
+#else
+#define debug(x...)
+#endif
 using namespace std;
 
-typedef long long ll;
-const ll INF = 1e18;
+#define ll long long
+#define ld long double
+#define int long long
+const int M = 1e9 + 7;
+const int N = 1e6 + 5;
+const ll infinity = 1e18;
+int dx[] = {1, 0, -1, 0, 1, 1, -1, -1}; //Right, Down, Left, Up, Diagonals
+int dy[] = {0, -1, 0, 1, 1, -1, 1, -1};
+inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
-void solve() {
-    int n, m;
-    if (!(cin >> n >> m)) return;
+#define rall(v) v.rbegin(), v.rend()
+#define all(v) v.begin(), v.end()
+#define print(x) cout << x << '\n';
+#define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
-    // ১-বেসড ইনডেক্সিং এর জন্য (n+2) সাইজ
-    vector<vector<ll>> a(n + 2, vector<ll>(m + 2));
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= m; j++) {
-            cin >> a[i][j];
+
+void solve() 
+{
+    int n,m,ans=infinity;cin>>n>>m;
+    vector<vector<int>> a(n,vector<int>(m)),dpstart(n,vector<int>(m)),dpend(n,vector<int>(m));
+
+    for(int i=0;i<n;i++)
+        for(int j=0;j<m;j++)
+            cin>>a[i][j];
+    
+    dpstart[0][0]=a[0][0];
+    dpend[n-1][m-1]=a[n-1][m-1];
+
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<m;j++)
+        {
+            if(!i && !j) continue;
+            dpstart[i][j]=a[i][j]+max(((i-1>=0) ? dpstart[i-1][j] : -infinity),((j-1>=0) ? dpstart[i][j-1] : -infinity));
         }
     }
 
-    // dpS: (1,1) থেকে (i,j) পর্যন্ত ম্যাক্সিমাম এনজয়মেন্ট
-    vector<vector<ll>> dpS(n + 2, vector<ll>(m + 2, -INF));
-    dpS[1][1] = a[1][1];
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= m; j++) {
-            if (i == 1 && j == 1) continue;
-            dpS[i][j] = max(dpS[i - 1][j], dpS[i][j - 1]) + a[i][j];
+    for(int i=n-1;i>=0;i--)
+    {
+        for(int j=m-1;j>=0;j--)
+        {
+            if(i==n-1 && j==m-1) continue;
+            dpend[i][j]=a[i][j]+max(((j+1<m) ? dpend[i][j+1] :-infinity),((i+1<n) ? dpend[i+1][j] : -infinity));
         }
     }
 
-    // dpT: (i,j) থেকে (n,m) পর্যন্ত ম্যাক্সিমাম এনজয়মেন্ট
-    vector<vector<ll>> dpT(n + 2, vector<ll>(m + 2, -INF));
-    dpT[n][m] = a[n][m];
-    for (int i = n; i >= 1; i--) {
-        for (int j = m; j >= 1; j--) {
-            if (i == n && j == m) continue;
-            dpT[i][j] = max(dpT[i + 1][j], dpT[i][j + 1]) + a[i][j];
+    for(int i=0;i<n;i++)
+    {
+        int tmp=-infinity;
+        vector<int> leftbest(m,-infinity),rightbest(m,-infinity);
+        if(i+1<n)
+        for(int j=0;j<m;j++)
+        { 
+            leftbest[j]=dpstart[i][j]+dpend[i+1][j];
+            if(j) leftbest[j]= max(leftbest[j],leftbest[j-1]);
+        }
+        if(i-1>=0)
+        for(int j=m-1;j>=0;j--)
+        {   
+            rightbest[j]=dpstart[i-1][j]+dpend[i][j];
+            if(j+1<m)  rightbest[j]= max(rightbest[j],rightbest[j+1]);
+        }
+        for(int j=0;j<m;j++)
+        { 
+            tmp=max({(j>0) ? leftbest[j-1] : -infinity,(j<m-1) ? rightbest[j+1] : -infinity,dpstart[i][j]+dpend[i][j]-3*a[i][j]});
+            ans=min(ans,tmp);
         }
     }
 
-    ll maxS = dpS[n][m];
+    print(ans)
 
-    // ম্যাক্স এনজয়মেন্ট পাথ S বের করা
-    vector<pair<int, int>> path;
-    int r = n, c = m;
-    while (r >= 1 && c >= 1) {
-        path.push_back({r, c});
-        if (r == 1 && c == 1) break;
-        if (r > 1 && dpS[r][c] == dpS[r - 1][c] + a[r][c]) r--;
-        else c--;
-    }
-    reverse(path.begin(), path.end());
-
-    // রো এবং কলাম প্রিফিক্স ম্যাক্সিমাম (বাইডাইরেকশনাল চেক এর জন্য)
-    vector<vector<ll>> row_max(n + 2, vector<ll>(m + 2, -INF));
-    vector<vector<ll>> col_max(n + 2, vector<ll>(m + 2, -INF));
-
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= m; j++) {
-            ll val = dpS[i][j] + dpT[i][j] - a[i][j];
-            row_max[i][j] = max(row_max[i][j - 1], val);
-            col_max[i][j] = max(col_max[i - 1][j], val);
-        }
-    }
-
-    ll result = INF;
-    // রাফায়েল পাথের ওপরের প্রতিটি সেল ব্লক করার ট্রাই করবে
-    for (auto& sk : path) {
-        int i = sk.first;
-        int j = sk.second;
-
-        // অপশন ১: অরিজিনাল পাথে থাকা
-        ll opt1 = maxS - 2 * a[i][j];
-
-        // অপশন ২: বাইপাস পাথ (i,j কে এড়িয়ে চলা)
-        ll dp_k = -INF;
-        if (i < n && j > 1) dp_k = max(dp_k, row_max[i + 1][j - 1]);
-        if (j < m && i > 1) dp_k = max(dp_k, col_max[i - 1][j + 1]);
-
-        // মিকেলাঞ্জেলো নিবে ম্যাক্সিমাম, রাফায়েল করবে মিনিমাইজ
-        result = min(result, max(opt1, dp_k));
-    }
-
-    cout << result << "\n";
+    debug(dpstart);
 }
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
+int32_t main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
 
-    int t;
-    if (!(cin >> t)) return 0;
-    while (t--) {
+    int t = 1;
+    cin>>t;
+    for (int i = 1; i <= t; i++) {
+        // cout << "Case " << i << ": ";
         solve();
     }
     return 0;

@@ -24,46 +24,15 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int n,ans=0;cin>>n;
-    vector<int> v(n+1),ch(n+1,0);
+    int n,f=0;cin>>n;
+    vector<int> v(n);
 
-    for(int i=0;i<n;i++) cin>>v[i];
-
-    //debug("AR");
-
-    v[n]=1000;
-
-    for(int i=1;i<n;i++)
+    for(auto &x : v) 
     {
-        //debug("ARAFAT");
-        if((v[i-1]==7-v[i]) or (v[i-1]==v[i])) 
-        {
-            ch[i]=1;
-            ch[i-1]=1;
-        }
-        if(v[i+1]==7-v[i] or v[i+1]==v[i]) 
-        {
-            ch[i]=1;
-            ch[i+1]=1;
-        }
+        cin>>x;
+        if(x==67) f=1;
     }
-
-    
-    for(int i=1;i<n;i++)
-    {
-        if(ch[i]==0) continue;
-        ch[i]+=ch[i-1];
-    }
-    debug(ch);
-
-    for(int i=1;i<=n;i++)
-    {
-        if(ch[i]==0) ans+=ch[i-1]/2;
-    }
-
-    //ans+=ch[n-1]/2;
-
-    print(ans)
+    yes(f)
 }
 
 int32_t main() {

@@ -22,48 +22,59 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 #define print(x) cout << x << '\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
+vector<vector<int>> adj;
+vector<int> col,vis;
+
+void dfs(int u,int par,int c)
+{
+    col[u]=c;
+    vis[u]=1;
+
+    for(auto x: adj[u])
+    {
+        if(!vis[x]) dfs(x,u,c^1);
+    }
+}
+
 void solve() 
 {
-    int n,ans=0;cin>>n;
-    vector<int> v(n+1),ch(n+1,0);
+    int n,m;cin>>n>>m;
+    adj.clear();
+    adj.resize(n);
+    col.assign(n,-1);
+    vis.assign(n,0);
 
-    for(int i=0;i<n;i++) cin>>v[i];
-
-    //debug("AR");
-
-    v[n]=1000;
-
-    for(int i=1;i<n;i++)
+    for(int i=0;i<m;i++)
     {
-        //debug("ARAFAT");
-        if((v[i-1]==7-v[i]) or (v[i-1]==v[i])) 
-        {
-            ch[i]=1;
-            ch[i-1]=1;
-        }
-        if(v[i+1]==7-v[i] or v[i+1]==v[i]) 
-        {
-            ch[i]=1;
-            ch[i+1]=1;
-        }
+        int u,v;cin>>u>>v;
+        u--;
+        v--;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
 
-    
-    for(int i=1;i<n;i++)
-    {
-        if(ch[i]==0) continue;
-        ch[i]+=ch[i-1];
-    }
-    debug(ch);
+    dfs(0,0,0);
 
-    for(int i=1;i<=n;i++)
+    vector<int> s1,s2;
+
+    for(int i=0;i<n;i++)
     {
-        if(ch[i]==0) ans+=ch[i-1]/2;
+        if(col[i]==0) s1.push_back(i+1);
+        else s2.push_back(i+1);
     }
 
-    //ans+=ch[n-1]/2;
-
-    print(ans)
+    if(s1.size()<s2.size())
+    {
+        cout<<s1.size()<<'\n';
+        for(auto x : s1) cout<<x<<' ';
+        cout<<'\n';
+    }
+    else
+    {
+        cout<<s2.size()<<'\n';
+        for(auto x : s2) cout<<x<<' ';
+        cout<<'\n';
+    }
 }
 
 int32_t main() {
