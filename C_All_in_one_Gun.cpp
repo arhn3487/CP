@@ -58,10 +58,12 @@ void solve()
 
         int sec_dem=0;
 
+        debug(ans);
         for(int i=0;i<n;i++)
         {
             sec_dem+=v[i];
-            int t_d=sec_dem+mx[i]-mn[i];
+            int t_d=sec_dem+((i+1<n) ? max(0LL,mx[i+1]-mn[i]) : 0);
+            //t_d=max(t_d,sec_dem);
             if(t_d>=extra)
             {
                 ans+=(i+1);

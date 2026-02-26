@@ -22,59 +22,52 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 #define print(x) cout << x << '\n';
 #define yes(x) cout << ((x) ? "YES\n" : "NO\n");
 
+int n;
+vector<int> a,cost,dpt,ans;
+vector<vector<int>> adj;
+
+int dfs(int u,int p,int d)
+{
+    int total=0,cost_child=0;
+    set<pair<int,int>> dept_sum;
+    for(auto x : adj[u])
+    {
+        if(u!=p)
+        {
+            int k=dfs(x,u,d+1);
+            dept_sum.insert({d,k});
+            total+= k;
+            cost_child+=cost[x];
+        }
+    }
+
+    
+
+    cost[u]=cost_child+total;
+    dpt[u]=d;
+
+    return total+a[u];
+}
+
 void solve() 
 {
-    int n,h,k,total=0,ans=0;cin>>n>>h>>k;
-    vector<int> v(n);
+    cin>>n;
+    a.resize(n);
+    cost.assign(n,0);
+    dpt.assign(n,-1);
+    adj.resize(n);
+    ans.assign(n,0);
 
-    for(auto &x : v)
+    for(int i=0;i<n-1;i++)
     {
-        cin>>x;
-        total+=x;
+        int u,v;cin>>u>>v;
+        u--;
+        v--;
+        adj[u].resize(v);
+        adj[v].resize(u);
     }
-    int bar=h/total;
-    bar--;
-    bar=max(bar,0LL);
-    int dam=(h/total)*total;
-    int extra=h-dam;
-    ans=(h/total)*n+(bar)*k;
 
-    debug(extra,total,ans);
-    if(extra)
-    {
-        if(ans)
-        ans+=k;
-        vector<int> mx(n,v[n-1]),mn(n,v[0]);
 
-        for(int i=1;i<n;i++)
-        {
-            mn[i]=min(mn[i-1],v[i]);
-        }
-
-        for(int i=n-2;i>=0;i--)
-        {
-            mx[i]=max(mx[i+1],v[i]);
-        }
-
-        int sec_dem=0;
-
-        for(int i=0;i<n;i++)
-        {
-            sec_dem+=v[i];
-            int t_d=sec_dem+mx[i]-mn[i];
-            if(t_d>=extra)
-            {
-                ans+=(i+1);
-                break;
-            }
-        }
-
-        debug(ans);
-
-        debug(mn);
-        debug(mx);
-    }
-    print(ans)
 }
 
 int32_t main() {

@@ -24,57 +24,46 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int n,h,k,total=0,ans=0;cin>>n>>h>>k;
-    vector<int> v(n);
+    int n,m;cin>>n>>m;
+    vector<int> res(n+1);
+    set<int> st;
+    vector<vector<int>> v(n+1);
+    vector<int> vv(n+1,0LL);
 
-    for(auto &x : v)
+    for(int i=0;i<m;i++)
     {
-        cin>>x;
-        total+=x;
+        int x,y;cin>>x>>y;
+        v[y].push_back(x);
+        vv[x]++;
     }
-    int bar=h/total;
-    bar--;
-    bar=max(bar,0LL);
-    int dam=(h/total)*total;
-    int extra=h-dam;
-    ans=(h/total)*n+(bar)*k;
 
-    debug(extra,total,ans);
-    if(extra)
+    for(int i=1;i<=n;i++)
     {
-        if(ans)
-        ans+=k;
-        vector<int> mx(n,v[n-1]),mn(n,v[0]);
-
-        for(int i=1;i<n;i++)
-        {
-            mn[i]=min(mn[i-1],v[i]);
-        }
-
-        for(int i=n-2;i>=0;i--)
-        {
-            mx[i]=max(mx[i+1],v[i]);
-        }
-
-        int sec_dem=0;
-
-        for(int i=0;i<n;i++)
-        {
-            sec_dem+=v[i];
-            int t_d=sec_dem+mx[i]-mn[i];
-            if(t_d>=extra)
-            {
-                ans+=(i+1);
-                break;
-            }
-        }
-
-        debug(ans);
-
-        debug(mn);
-        debug(mx);
+        if(!vv[i]) st.insert(i);
     }
-    print(ans)
+
+    debug(v);
+
+
+    for(int i=n;i>=1;i--)
+    {
+        for(auto x : v[i])
+        {
+            st.insert(x);
+        }
+        if(st.empty())
+        {
+            print(-1)
+            return;
+        }
+        res[i]=*st.rbegin();
+
+        st.erase(res[i]);
+    }
+
+
+    for(int i=1;i<=n;i++) cout<<res[i]<<' ';
+    cout<<'\n';
 }
 
 int32_t main() {

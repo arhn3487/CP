@@ -24,57 +24,27 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int n,h,k,total=0,ans=0;cin>>n>>h>>k;
-    vector<int> v(n);
-
-    for(auto &x : v)
+    int n;
+    string s;
+    cin>>n>>s;
+    int o=count(all(s),'1'),z=n-o;
+    if(o%2==0)
     {
-        cin>>x;
-        total+=x;
+        cout<<o<<'\n';
+        for(int i=0;i<n;i++) 
+            if(s[i]=='1')
+                cout<<i+1<<' ';
+        cout<<'\n';
     }
-    int bar=h/total;
-    bar--;
-    bar=max(bar,0LL);
-    int dam=(h/total)*total;
-    int extra=h-dam;
-    ans=(h/total)*n+(bar)*k;
-
-    debug(extra,total,ans);
-    if(extra)
+    else if(z%2)
     {
-        if(ans)
-        ans+=k;
-        vector<int> mx(n,v[n-1]),mn(n,v[0]);
-
-        for(int i=1;i<n;i++)
-        {
-            mn[i]=min(mn[i-1],v[i]);
-        }
-
-        for(int i=n-2;i>=0;i--)
-        {
-            mx[i]=max(mx[i+1],v[i]);
-        }
-
-        int sec_dem=0;
-
-        for(int i=0;i<n;i++)
-        {
-            sec_dem+=v[i];
-            int t_d=sec_dem+mx[i]-mn[i];
-            if(t_d>=extra)
-            {
-                ans+=(i+1);
-                break;
-            }
-        }
-
-        debug(ans);
-
-        debug(mn);
-        debug(mx);
+        cout<<z<<'\n';
+        for(int i=0;i<n;i++) 
+            if(s[i]=='0')
+                cout<<i+1<<' ';
+        cout<<'\n';
     }
-    print(ans)
+    else cout<<-1<<'\n';
 }
 
 int32_t main() {

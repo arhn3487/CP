@@ -12,7 +12,7 @@ using namespace std;
 #define int long long
 const int M = 1e9 + 7;
 const int N = 1e6 + 5;
-const ll infinity = LLONG_MAX;
+const ll infinity = 1e15;
 int dx[] = {1, 0, -1, 0, 1, 1, -1, -1}; //Right, Down, Left, Up, Diagonals
 int dy[] = {0, -1, 0, 1, 1, -1, 1, -1};
 inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
@@ -24,7 +24,13 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    
+    int n,m,d;cin>>n>>m>>d;
+    int aktate=d/m;
+    aktate++;
+    debug(aktate);
+    int res=(n/aktate);
+    res+=((n%aktate)>0);
+    print(res)
 }
 
 int32_t main() {

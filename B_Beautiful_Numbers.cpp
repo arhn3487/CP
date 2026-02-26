@@ -24,57 +24,35 @@ inline ll lcm(ll a, ll b) { return (a * b) / __gcd(a, b); }
 
 void solve() 
 {
-    int n,h,k,total=0,ans=0;cin>>n>>h>>k;
-    vector<int> v(n);
+    string s;cin>>s;
+    priority_queue<int> pq;
+    int sum=0,cnt=0;
 
-    for(auto &x : v)
+    for(auto x : s) sum+=(x-'0');
+    int f=(s[0]-'0');
+
+    for(int i=1;i<s.length();i++)
     {
-        cin>>x;
-        total+=x;
+        pq.push(s[i]-'0');
     }
-    int bar=h/total;
-    bar--;
-    bar=max(bar,0LL);
-    int dam=(h/total)*total;
-    int extra=h-dam;
-    ans=(h/total)*n+(bar)*k;
 
-    debug(extra,total,ans);
-    if(extra)
+    for(int i=1;i<s.length();i++)
     {
-        if(ans)
-        ans+=k;
-        vector<int> mx(n,v[n-1]),mn(n,v[0]);
-
-        for(int i=1;i<n;i++)
+        if(sum<=9) break;
+        if(pq.size() && (sum-f+1>sum-pq.top()))
         {
-            mn[i]=min(mn[i-1],v[i]);
+            sum-=pq.top();
+            pq.pop();
         }
-
-        for(int i=n-2;i>=0;i--)
+        else
         {
-            mx[i]=max(mx[i+1],v[i]);
+            sum-=(f-1);
+            f=1;
         }
-
-        int sec_dem=0;
-
-        for(int i=0;i<n;i++)
-        {
-            sec_dem+=v[i];
-            int t_d=sec_dem+mx[i]-mn[i];
-            if(t_d>=extra)
-            {
-                ans+=(i+1);
-                break;
-            }
-        }
-
-        debug(ans);
-
-        debug(mn);
-        debug(mx);
+        cnt++;
     }
-    print(ans)
+
+    print(cnt);
 }
 
 int32_t main() {
